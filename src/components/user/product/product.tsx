@@ -10,7 +10,6 @@ import { FaLayerGroup } from "react-icons/fa";
 import { GoSearch } from "react-icons/go";
 import { RxCross1, RxReset } from 'react-icons/rx';
 
-
 export function Products() {
     const router = useRouter();
     const [toggleSearch, setToggleSearch] = useState<boolean>(false);
@@ -72,7 +71,7 @@ export function Products() {
     }
     const { data, size, setSize, isLoading: isProductLoading, error, mutate } = useSWRInfinite(
         getKey,
-        ([url, params]) => axios.get(url, { params }).then(res => res.data), // fetcher ที่รับ parameter ได้ 
+        ([url, params]) => axios.get(url as string, { params }).then(res => res.data), // fetcher ที่รับ parameter ได้ 
         {
             onError: (error) => {
                 console.error('Product List Fetch Error:', error);
