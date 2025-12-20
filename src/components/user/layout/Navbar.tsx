@@ -42,7 +42,7 @@ export const Navbar: FC = () => {
                     <h1 className='text-3xl tracking-wide uppercase font-light text-gray-700'>Clothing .</h1>
                 </div>
                 <div>
-                    <ul className='text-gray-800 uppercase tracking-wide font-light flex items-center gap-x-15'>
+                    <ul className='text-gray-900 uppercase tracking-wide font-light flex items-center gap-x-15'>
                         <li onClick={() => router.push('/user')} className='cursor-pointer'>หน้าหลัก</li>
                         <li onClick={() => router.push('/user/product')} className='cursor-pointer'>สินค้า</li>
                         <li className='cursor-pointer'>เกี่ยวกับ</li>

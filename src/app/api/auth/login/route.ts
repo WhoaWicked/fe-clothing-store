@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         res.cookies.set("token", result.data.access_token, {
             httpOnly: true,
             path: '/',
-            maxAge: 60 * 50,
+            maxAge: 60 * 60 * 24 * 2, // 2 days
             // sameSite: 'lax',
         });
         return res;
