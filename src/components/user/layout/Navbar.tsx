@@ -19,13 +19,7 @@ export const Navbar: FC = () => {
                 confirmButtonColor: '#d9534f',
                 showCancelButton: true,
                 cancelButtonColor: '#6B7280',
-                cancelButtonText: 'ยกเลิก',
-                customClass: {
-                    title: 'swal2-font-normal',
-                    content: 'swal2-font-lighter',
-                    confirmButton: 'swal2-font-lighter',
-                    cancelButton: 'swal2-font-lighter',
-                }
+                cancelButtonText: 'ยกเลิก'
             });
             if (!result.isConfirmed) return;
             await axios.post('/api/auth/logout');
