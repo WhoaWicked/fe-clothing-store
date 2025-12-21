@@ -10,6 +10,40 @@ import { FaLayerGroup } from "react-icons/fa";
 import { GoSearch } from "react-icons/go";
 import { RxCross1, RxReset } from 'react-icons/rx';
 
+interface ProductParams {
+    page: number;
+    limit: number;
+    gender_name?: string;
+    category_name?: string;
+    product_name?: string;
+}
+
+interface Product {
+    id: number;
+    product_code: string;
+    product_name: string;
+    category_id: number;
+    category_name: string;
+    gender_id: number;
+    gender_name: string;
+    description: string;
+    base_price: string;
+    image_path: string;
+    best_seller: boolean;
+    is_active: boolean;
+    created_at: string;
+}
+
+interface PreviousPageData {
+    pagination: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+    },
+    products: Product[];
+}
+
 export function Products() {
     const router = useRouter();
     const [toggleSearch, setToggleSearch] = useState<boolean>(false);
@@ -54,7 +88,8 @@ export function Products() {
             }
         }
     );
-    const getKey = (pageIndex: number, previousPageData: any) => {
+    const getKey = (pageIndex: number, previousPageData: PreviousPageData) => {
+        console.log(previousPageData)
         if (previousPageData && !previousPageData.products.length) return null;
         if (previousPageData && previousPageData?.pagination) {
             const { currentPage, totalPages } = previousPageData.pagination;
@@ -71,7 +106,7 @@ export function Products() {
     }
     const { data, size, setSize, isLoading: isProductLoading, error, mutate } = useSWRInfinite(
         getKey,
-        ([url, params]) => axios.get(url as string, { params }).then(res => res.data), // fetcher ที่รับ parameter ได้ 
+        ([url, params]: [string, ProductParams]) => axios.get(url, { params }).then(res => res.data), // fetcher ที่รับ parameter ได้ 
         {
             onError: (error) => {
                 console.error('Product List Fetch Error:', error);
