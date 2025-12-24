@@ -5,9 +5,12 @@ import { useRouter } from 'next/navigation';
 import { PiUser } from 'react-icons/pi';
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import Swal from 'sweetalert2';
+import { useCart } from '@/context/user/cartContext';
 
 export const Navbar: FC = () => {
     const router = useRouter();
+    const { cartData } = useCart();
+    const totalItems = cartData?.summary?.total_cart_items || 0;
     const [userMenu, setUserMenu] = useState<boolean>(false);
     const handleLogout = async () => {
         try {
@@ -33,7 +36,7 @@ export const Navbar: FC = () => {
             className=' py-4 h-19 border-b border-gray-300'>
             <div className='flex justify-between items-center w-full'>
                 <div>
-                    <h1 className='text-3xl tracking-wide uppercase font-light text-gray-700'>Clothing .</h1>
+                    <h1 className='text-3xl tracking-wide uppercase font-medium text-gray-800'>Clothing .</h1>
                 </div>
                 <div>
                     <ul className='text-gray-900 uppercase tracking-wide font-light flex items-center gap-x-15'>
@@ -44,8 +47,17 @@ export const Navbar: FC = () => {
                     </ul>
                 </div>
                 <div>
-                    <div className='flex items-center gap-x-4 text-gray-600'>
-                        <HiOutlineShoppingBag className='cursor-pointer' size={23} />
+                    <div className='flex items-center gap-x-4 text-gray-700'>
+                        <div onClick={() => router.push('/user/cart')} className='relative cursor-pointer'>
+                            <HiOutlineShoppingBag className='' size={23} />
+                            {totalItems > 0 && (
+                                <div className='absolute left-2 top-4'>
+                                    <div className='bg-black rounded-full p-.5 size-4.5 flex justify-center items-center'>
+                                        <p className='text-[9px] text-white'>{totalItems > 99 ? '99+' : totalItems}</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                         <div className='relative'
                             onMouseEnter={() => setUserMenu(true)}
                             onMouseLeave={() => setUserMenu(false)}

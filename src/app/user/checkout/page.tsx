@@ -3,12 +3,12 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { Products } from '@/components/user/Product';
+
 
 export default function page() {
     return (
-        <div id="user-product-page">
-            <Products />
+        <div id="user-checkout-page">
+           
         </div>
     )
 }
