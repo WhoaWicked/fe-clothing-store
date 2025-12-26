@@ -8,10 +8,14 @@ import { RxPlus } from "react-icons/rx";
 import { RxBorderSolid } from "react-icons/rx";
 import { PiTrash, PiTrashLight } from "react-icons/pi";
 import Swal from 'sweetalert2';
+import { FaLayerGroup } from 'react-icons/fa';
+import { ProductNoImage } from './ProductSkeleton';
+import { HiOutlineShoppingBag } from 'react-icons/hi2';
 
 interface ItemData {
     item_id: number;
     product_id: number;
+    product_code: string;
     product_name: string;
     description: string;
     image_path: string;
@@ -45,6 +49,7 @@ export function CartItems(
             updateCartItemQuantity: UpdateCartItemQuantityParams,
             deleteCartItem: DeleteCartItemParams
         }) {
+    const router = useRouter();
     const [quantity, setQuantity] = useState<number>(item?.quantity);
     useEffect(() => {
         setQuantity(item?.quantity);
@@ -74,13 +79,21 @@ export function CartItems(
             <div key={item.item_id} className='border-b border-gray-300 pb-5 mb-5'>
                 <div className='flex justify-between items-center'>
                     <div className='flex  gap-x-5'>
-                        <div className='size-35 aspect-square relative shadow-md overflow-hidden'>
-                            <Image
-                                className='absolute'
-                                fill
-                                src={item?.image_path || 'Product Image'}
-                                alt={item?.product_name || 'Product Image'}
-                            />
+                        <div >
+                            {item?.image_path ? (
+                                <div onClick={() => router.push(`/user/product/${item?.product_id}-${item.product_code}-${item.product_name}`)} className='cursor-pointer size-35 aspect-square relative shadow-md overflow-hidden '>
+                                    <Image
+                                        className='absolute'
+                                        fill
+                                        src={item?.image_path || 'Product Image'}
+                                        alt={item?.product_name || 'Product Image'}
+                                    />
+                                </div>
+                            ) : (
+                                <div onClick={() => router.push(`/user/product/${item?.product_id}-${item.product_code}-${item.product_name}`)} className='cursor-pointer border border-gray-300 size-35 aspect-square relative'>
+                                    <ProductNoImage image='small_image' />
+                                </div>
+                            )}
                         </div>
                         <div className='flex flex-col justify-between'>
                             <h2 className='text-gray-900 font-light text-md'>{item?.product_name}</h2>
@@ -122,7 +135,7 @@ export function CartItems(
 }
 
 export function MyCart() {
-    const { cartData, mutateCart } = useCart();
+    const { cartData, mutateCart, cartIsLoading } = useCart();
     const router = useRouter();
     const updateCartItemQuantity = async (cartItemId: number, newQuantity: number) => {
         try {
@@ -165,14 +178,27 @@ export function MyCart() {
                 </div>
                 <div className='grid grid-cols-[3fr_1fr] gap-x-8'>
                     <div className=''>
-                        <div className='h-135 overflow-y-auto pr-5'>
-                            {cartData?.items.map((item: ItemData) => (
-                                <CartItems key={item.item_id}
-                                    item={item}
-                                    updateCartItemQuantity={updateCartItemQuantity}
-                                    deleteCartItem={deleteCartItem} />
-                            ))}
-                        </div>
+                        {cartData?.items.length === 0 ? (
+                            <div className='h-full flex flex-col items-center  justify-center tracking-wide '>
+                                <div className='mb-10'>
+                                    <HiOutlineShoppingBag className="text-gray-400" size={40} />
+                                </div>
+                                <div className='flex items-center flex-col justify-center space-y-2 mb-6'>
+                                    <h3 className='text-lg font-normal text-gray-800'>ตะกร้าสินค้าของคุณว่างเปล่า</h3>
+                                    <p className='text-sm font-light text-gray-600'>คุณยังไม่ได้เพิ่มสินค้าใดๆ ลงในตะกร้า</p>
+                                </div>
+                                <button onClick={() => router.push('/user/product')} className='font-light bg-white text-sm cursor-pointer text-gray-700 border border-gray-300 shadow-sm hover:border-gray-500 hover:text-gray-900 px-5 py-3 disabled:opacity-50 disabled:cursor-default hover:scale-105 transition-all duaration-300'>กลับไปเลือกซื้อสินค้า</button>
+                            </div>
+                        ) : (
+                            <div className='h-135 overflow-y-auto pr-5'>
+                                {cartData?.items.map((item: ItemData) => (
+                                    <CartItems key={item.item_id}
+                                        item={item}
+                                        updateCartItemQuantity={updateCartItemQuantity}
+                                        deleteCartItem={deleteCartItem} />
+                                ))}
+                            </div>
+                        )}
                     </div>
                     <div className='border border-gray-300 p-4.5 h-fit tracking-wide shadow-md'>
                         <h2 className='text-xl mb-6.5'>สรุป</h2>
@@ -196,8 +222,9 @@ export function MyCart() {
 
                             className=' '>
                             <button
+                                disabled={cartData?.items.length === 0}
                                 onClick={() => router.push('/user/checkout')}
-                                className={`${cartData?.items.length === 0 ? 'opacity-40 cursor-default' : 'hover:opacity-70'} bg-black w-full cursor-pointer  text-white font-light text-md py-2.5 transition-all duration-100 `}>ชำระเงิน</button>
+                                className={`${cartData?.items.length === 0 ? 'opacity-50 cursor-default' : 'hover:opacity-70 cursor-pointer '} bg-black w-full text-white font-light text-md py-2.5 transition-all duration-100 `}>ชำระเงิน</button>
                         </div>
                     </div>
                 </div>

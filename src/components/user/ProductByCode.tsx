@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useCart } from '@/context/user/cartContext';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { OneProductSkeleton, ProductNoImage } from '../user/ProductSkeleton';
 
 const regexProductCodeFromURL = (slug: string) => {
     if (!slug) return null;
@@ -82,6 +83,9 @@ export function ProductByCode() {
     }
     const [selectVariantId, setSelectVariantId] = useState<number | null>(null);
     const [isMounted, setIsMounted] = useState<boolean>(false);
+    if (productIsLoading || variantIsLoading) {
+        return <OneProductSkeleton />;
+    }
     return (
         <div id="product-by-code-component" className="my-10">
             <div className='grid grid-cols-2  gap-x-10'>
@@ -89,20 +93,24 @@ export function ProductByCode() {
                     <div className=' flex flex-col gap-4 w-30 shrink-0'>
                         {Array.from({ length: 4 }).map((_, index) => (
                             <div key={index} className='relative aspect-4/4 h-full w-full overflow-hidden'>
-                                <Image fill
-                                    src={productData?.image_path}
-                                    alt={productData?.product_name || 'Product Image'}
-                                    className="object-cover absolute"
-                                />
+                                {productData?.image_path ? (
+                                    <Image fill
+                                        src={productData?.image_path}
+                                        alt={productData?.product_name}
+                                        className="object-cover absolute"
+                                    />
+                                ) : <ProductNoImage image="small_image" />}
                             </div>
                         ))}
                     </div>
                     <div className='relative flex-1 overflow-hidden'>
-                        <Image fill
-                            src={productData?.image_path}
-                            alt={productData?.product_name || 'Product Image'}
-                            className="object-cover absolute"
-                        />
+                        {productData?.image_path ? (
+                            <Image fill
+                                src={productData?.image_path}
+                                alt={productData?.product_name}
+                                className="object-cover absolute"
+                            />
+                        ) : <ProductNoImage />}
                     </div>
                 </div>
                 <div className='tracking-wide '>

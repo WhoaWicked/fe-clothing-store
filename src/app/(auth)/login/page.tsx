@@ -76,7 +76,7 @@ export default function Login() {
                                         <label htmlFor="email" className="text-sm tracking-wide text-gray-600 font-light">
                                             บัญชีผู้ใช้
                                         </label>
-                                        <div className="flex items-center gap-x-4 border border-gray-300  px-4 py-3 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-md">
+                                        <div className="flex items-center gap-x-4 border border-gray-300  px-4 py-2.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-md">
                                             <PiUser className="text-gray-400" size={20} />
                                             <input onChange={(e) => setEmail(e.target.value)} type="text" className="font-light w-full tracking-wide text-gray-600 focus:outline-none" placeholder="เช่น clothing@gmail.com" autoFocus />
                                         </div>
@@ -85,7 +85,7 @@ export default function Login() {
                                         <label htmlFor="password" className="text-sm tracking-wide text-gray-600 font-light">
                                             รหัสผ่าน
                                         </label>
-                                        <div className="flex items-center gap-x-4 border border-gray-300  px-4 py-3 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-md">
+                                        <div className="flex items-center gap-x-4 border border-gray-300  px-4 py-2.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-md">
                                             <SlLock className="text-gray-400" size={20} />
                                             <input onChange={(e) => setPassword(e.target.value)} type="password" className="font-light w-full tracking-wide text-gray-600 focus:outline-none" placeholder="รหัสผ่าน" />
                                         </div>

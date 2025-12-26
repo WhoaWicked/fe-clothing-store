@@ -6,6 +6,8 @@ import { PiUser } from 'react-icons/pi';
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 import Swal from 'sweetalert2';
 import { useCart } from '@/context/user/cartContext';
+import { PiHeartStraightLight } from "react-icons/pi";
+import { LiaHeart } from 'react-icons/lia';
 
 export const Navbar: FC = () => {
     const router = useRouter();
@@ -48,6 +50,7 @@ export const Navbar: FC = () => {
                 </div>
                 <div>
                     <div className='flex items-center gap-x-4 text-gray-700'>
+                        <LiaHeart className='' size={23} />
                         <div onClick={() => router.push('/user/cart')} className='relative cursor-pointer'>
                             <HiOutlineShoppingBag className='' size={23} />
                             {totalItems > 0 && (
