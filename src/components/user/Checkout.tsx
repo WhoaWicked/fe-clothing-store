@@ -1,6 +1,6 @@
 'use client';
 import React from 'react'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react';
 import { useCart } from '@/context/user/cartContext';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
@@ -8,6 +8,10 @@ import Swal from 'sweetalert2';
 import Image from 'next/image';
 import { ProductNoImage } from './ProductSkeleton';
 import { SlArrowLeft } from 'react-icons/sl';
+import { AiFillInfoCircle } from "react-icons/ai";
+import useSWR from 'swr';
+import { HiOutlineHome } from 'react-icons/hi2';
+import { RxCross2 } from 'react-icons/rx';
 
 const showErrorAlert = (message: string) => {
     Swal.fire({
@@ -18,11 +22,13 @@ const showErrorAlert = (message: string) => {
     });
 }
 
+const fetcher = (url: string) => axios.get(url).then(res => res.data);
+
 export function Checkout() {
     const router = useRouter();
     const { cartData } = useCart();
     const { items } = cartData || {};
-    console.log(items)
+    const [openAddressPopup, setOpenAddressPopup] = useState(false);
     const [address, setAddress] = useState({
         first_name: "",
         last_name: "",
@@ -33,6 +39,19 @@ export function Checkout() {
         zip_code: "",
         phone: ""
     });
+    const handleSelect = (selectedAddress: any) => {
+        setAddress({
+            first_name: selectedAddress.first_name,
+            last_name: selectedAddress.last_name,
+            street: selectedAddress.street,
+            sub_district: selectedAddress.sub_district,
+            district: selectedAddress.district,
+            province: selectedAddress.province,
+            zip_code: selectedAddress.zip_code,
+            phone: selectedAddress.phone
+        });
+        setOpenAddressPopup(false);
+    }
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setAddress({
@@ -63,15 +82,21 @@ export function Checkout() {
         <div id="user-checkout-component" className='my-20 max-w-250 mx-auto'>
             <div className='flex justify-center gap-x-15'>
                 <div>
-                    <button onClick={() => router.push('/user/cart')} className='flex items-center gap-x-3 font-light bg-white text-sm cursor-pointer text-gray-700 border border-gray-300 shadow-sm hover:border-gray-500 hover:text-gray-900 px-4 py-3 disabled:opacity-50 disabled:cursor-default hover:scale-105 transition-all duaration-300 mb-6'>
-                        <SlArrowLeft />
+                    <button onClick={() => router.push('/user/cart')} className='flex items-center gap-x-3 font-light bg-white text-sm cursor-pointer text-gray-700 border border-gray-300 shadow-sm hover:border-gray-500 hover:text-gray-900 px-4 py-2 disabled:opacity-50 disabled:cursor-default hover:scale-105 transition-all duaration-300 mb-8'>
+                        <SlArrowLeft size={13} />
                         <span>
                             ย้อนกลับ
                         </span>
                     </button>
-                    <div className="flex items-center gap-x-3 mb-10">
-                        <h1 className="text-gray-800 text-3xl font-light">ที่อยู่จัดส่ง</h1>
-                        <div className="mt-1 w-12 h-0.75 bg-gray-600"></div>
+                    <div className='flex justify-between items-center mb-10'>
+                        <div className="flex items-center gap-x-3">
+                            <h1 className="text-gray-800 text-3xl font-light">ที่อยู่จัดส่ง</h1>
+                            <div className="mt-1 w-12 h-0.75 bg-gray-600"></div>
+                        </div>
+                        <div onClick={() => setOpenAddressPopup(true)} className='flex items-center gap-x-2 cursor-pointer transition-all duration-300 hover:scale-110'>
+                            <HiOutlineHome size={20} className='text-gray-600 cursor-pointer' />
+                            <button className='cursor-pointer font-light text-gray-700 text-sm'>เลือกที่อยู่จัดส่ง</button>
+                        </div>
                     </div>
                     <div>
                         <form action="" onSubmit={handleSubmit} className='w-125 space-y-6'>
@@ -100,12 +125,13 @@ export function Checkout() {
                                     className={`${cartData?.items.length === 0 ? 'opacity-40 cursor-default' : 'hover:opacity-70'} bg-black w-full cursor-pointer  text-white font-light text-md py-2.5 transition-all duration-100 `}>สั่งซื้อสินค้า</button>
                             </div>
                         </form>
-                    </div></div>
+                    </div>
+                </div>
                 <div>
                     <div className='p-4.5 w-120 h-fit tracking-wide '>
                         <div className='mb-4 border-b border-gray-300 pb-4'>
                             <h2 className='text-xl mb-5'>รายการสินค้า</h2>
-                            <div className='pt-4 pr-4 h-90 overflow-y-scroll'>
+                            <div className='pt-4 pr-4 max-h-90 overflow-y-scroll'>
                                 {items?.map((item: any) => (
                                     <div key={item.item_id}>
                                         <div className='flex justify-between items-start space-y-5'>
@@ -178,8 +204,61 @@ export function Checkout() {
                                     <div></div>
                                 </div>
                             </div>
+                            <div className='flex items-center gap-x-2 mt-5'>
+                                <AiFillInfoCircle size={20} className='text-gray-300' />
+                                <p className='text-sm text-gray-400 font-light'>
+                                    กรุณาชำระเงินภายใน 30 นาที ระบบจะยกเลิกออเดอร์หากไม่ได้ชำระเงิน
+                                </p>
+                            </div>
                         </div>
 
+                    </div>
+                </div>
+            </div>
+            {openAddressPopup && <AddressListPopup onSelectAddress={handleSelect} onClose={() => setOpenAddressPopup(false)} />}
+        </div>
+    )
+}
+
+interface AddressListPopupProps {
+    onClose: () => void;
+    onSelectAddress?: (address: any) => void;
+}
+
+const AddressListPopup: FC<AddressListPopupProps> = ({ onClose, onSelectAddress }) => {
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => { document.body.style.overflow = 'auto'; };
+    }, []);
+    const { data, error, isLoading } = useSWR('/api/user/address', fetcher,
+        { onError: (err) => console.error("Error fetching addresses:", err) }
+    );
+    return (
+        <div id="user-address-list-popup-component">
+            <div className="px-4 md:px-0 fixed inset-0 z-40 bg-[rgba(0,0,0,0.4)] flex justify-center items-center">
+                <div className="tracking-[.5px] min-w-75 max-w-150 w-full bg-white rounded-[5px] py-4 pb-6 shadow-xl relative">
+                    <div className='flex justify-between items-center border-b border-[#E0E0E0] px-6 pb-4 mb-6'>
+                        <div className='flex items-center gap-x-2'>
+                            <h2 className=' font-normal text-gray-800'>ที่อยู่ทั้งหมดของฉัน</h2>
+                        </div>
+                        <button onClick={onClose} className='cursor-pointer p-1.5 bg-[#F3F4F6] rounded-[50%] hover:bg-[#E5E7EB]'>
+                            <RxCross2 size={20} color='#454545' />
+                        </button>
+                    </div>
+                    <div className='px-6 pr-2 font-light '>
+                        <div className='space-y-5 h-95.5 overflow-y-auto pr-4'>
+                            {data?.map((address: any) => (
+                                <div onClick={() => onSelectAddress && onSelectAddress(address)} key={address.id} className='cursor-pointer border border-gray-300 p-4 shadow-sm rounded transition-all duration-100 hover:bg-gray-100 hover:border-gray-400'>
+                                    <div>
+                                        <div className='text-gray-900 font-light text-md mb-3 flex items-center justify-between gap-x-4'>
+                                            <span className='line-clamp-1'>{address.first_name} {address.last_name} </span>
+                                        </div>
+                                        <p className='text-sm text-gray-500 font-light mb-1'>(+66) {address.phone}</p>
+                                        <p className='text-sm text-gray-500 font-light line-clamp-1'>{address.street}, {address.sub_district}, {address.district}, {address.province}, {address.zip_code}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
