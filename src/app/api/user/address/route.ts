@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
     try {
         const token = req.cookies.get("token")?.value;
         if (!token) {
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
     }
 }
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
     try {
         const token = req.cookies.get("token")?.value;
         if (!token) {
