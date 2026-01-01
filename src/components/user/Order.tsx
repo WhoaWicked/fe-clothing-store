@@ -69,6 +69,22 @@ export const OrderList: FC<OrderListProps> = ({ statusId }) => {
             </div>
         )
     }
+    const handleRepayOrder = async (order: any) => {
+        try {
+            const orderId = order.id;
+            const response = await axios.post(`/api/user/order/repay/${orderId}`);
+            if (response.status === 200 && response.data) {
+                window.location.assign(response.data.checkoutUrl);
+            }
+
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                console.error("Error repaying order:", error.response.data.error.message || error.response.data);
+                return;
+            }
+            console.error("Error repaying order:", error);
+        }
+    }
     const statusButtonConfig = [
         {
             status: 'pending_payment',
@@ -76,12 +92,12 @@ export const OrderList: FC<OrderListProps> = ({ statusId }) => {
                 {
                     label: 'ยกเลิกคำสั่งซื้อ',
                     className: 'cursor-pointer font-light text-gray-800 px-5.5 py-2 text-sm rounded border border-gray-300 transition-all duration-100 hover:border-gray-300 hover:bg-gray-100',
-                    onClick: (order: number) => { setSelectCancelOrderId(order) }, // ใส่ฟังก์ชันได้
+                    onClick: (order: any) => { setSelectCancelOrderId(order) }, // ใส่ฟังก์ชันได้
                 },
                 {
                     label: 'ชำระเงิน',
                     className: 'cursor-pointer font-light text-white bg-gray-900 px-5.5 py-2 text-sm rounded transition-all duration-100 hover:opacity-70',
-                    onClick: () => { },
+                    onClick: (order: any) => { handleRepayOrder(order) },
                 },
             ],
         },

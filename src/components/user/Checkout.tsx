@@ -67,7 +67,7 @@ export function Checkout() {
             });
 
             if (response.status === 200 && response.data) {
-                window.location.href = response.data.checkoutUrl;
+                window.location.assign(response.data.checkoutUrl)
             }
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {

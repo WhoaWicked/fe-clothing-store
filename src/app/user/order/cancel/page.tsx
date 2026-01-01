@@ -25,7 +25,7 @@ export default function OrderCancelPage() {
 
         <div className="flex flex-col space-y-4">
           <Link
-            href="/user/checkout"
+            href="/user/order"
             className="w-full px-4 py-3 text-center font-light tracking-wide text-sm transition-all duration-200 bg-black text-white hover:opacity-80"
           >
             ชำระเงินใหม่
