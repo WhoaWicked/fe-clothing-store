@@ -35,13 +35,13 @@ export const Navbar: FC = () => {
     }
     return (
         <nav id="user-navbar"
-            className=' py-4 h-19 border-b border-gray-300'>
+            className=' py-4 border-b border-gray-300'>
             <div className='flex justify-between items-center w-full'>
                 <div>
-                    <h1 className='text-3xl tracking-wide uppercase font-medium text-gray-800'>Clothing .</h1>
+                    <h1 className='text-3xl tracking-wide italic uppercase font-medium text-gray-800'>Clothing</h1>
                 </div>
                 <div>
-                    <ul className='text-gray-900 uppercase tracking-wide font-light flex items-center gap-x-15'>
+                    <ul className='text-gray-800 uppercase tracking-wide font-light flex items-center gap-x-15'>
                         <li onClick={() => router.push('/user')} className='cursor-pointer'>หน้าหลัก</li>
                         <li onClick={() => router.push('/user/product')} className='cursor-pointer'>สินค้า</li>
                         <li className='cursor-pointer'>เกี่ยวกับ</li>
@@ -70,7 +70,7 @@ export const Navbar: FC = () => {
                                 <div className='z-20 absolute right-0 top-6 bg-white pt-2'>
                                     <div className='border border-gray-300  w-40  shadow-sm'>
                                         <ul className='font-light text-gray-900 text-sm tracking-wide'>
-                                            <li className='hover:bg-gray-200 p-3 cursor-pointer'>โปรไฟล์ผู้ใช้</li>
+                                            <li  className='hover:bg-gray-200 p-3 cursor-pointer'>โปรไฟล์ผู้ใช้</li>
                                             <li onClick={() => router.push('/user/order')} className='hover:bg-gray-200 p-3 cursor-pointer'>รายการสั่งซื้อ</li>
                                             <li onClick={() => router.push('/user/address')} className='hover:bg-gray-200 p-3 cursor-pointer'>ที่อยู่จัดส่ง</li>
                                             <li className='hover:bg-gray-200 p-3 cursor-pointer' onClick={handleLogout}>ออกจากระบบ</li>
