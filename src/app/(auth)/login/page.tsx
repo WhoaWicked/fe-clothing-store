@@ -40,6 +40,8 @@ export default function Login() {
             const role = getRoleFromToken(result.access_token);
             if (role === 'user') {
                 router.push('/user');
+            } else if (role === 'staff') {
+                router.push('/staff');
             }
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {

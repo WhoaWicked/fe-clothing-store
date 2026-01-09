@@ -1,0 +1,33 @@
+'use client';
+import React, { FC, useState } from 'react';
+import axios from 'axios';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { BsBoxSeam } from "react-icons/bs";
+import { PiNewspaper } from "react-icons/pi";
+
+export const Sidebar: FC = () => {
+    const pathname = usePathname();
+    const sidebarMenu = [
+        { name: 'Add Product', icon: <IoIosAddCircleOutline size={22} />, href: '/staff/product/add' },
+        { name: 'Products', icon: <BsBoxSeam size={19} />, href: '/staff/product' },
+        { name: 'Orders', icon: <PiNewspaper size={22} />, href: '/staff/order' },
+    ]
+
+    return (
+        <aside id='staff-sidebar-component'>
+            <div className='min-h-screen w-70 py-6 border-r border-gray-300 '>
+                <div className='flex flex-col items-end gap-y-4 tracking-wide font-light text-sm text-gray-600'>
+                    {sidebarMenu.map((menu, index) => (
+                        <Link
+                            className={`${pathname == menu.href ? 'border-gray-800 text-gray-900 font-normal' : 'border-gray-300'} flex items-center gap-x-3 border border-r-transparent w-55 p-3`} key={index} href={menu.href}>
+                            <span>{menu.icon}</span>
+                            <span>{menu.name}</span>
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        </aside>
+    )
+}
