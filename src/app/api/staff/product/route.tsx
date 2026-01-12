@@ -11,6 +11,7 @@ export async function GET(request: NextRequest) {
         const page = searchParams.get("page");
         const limit = searchParams.get("limit");
         const product_name = searchParams.get("product_name") || undefined;
+        const product_code = searchParams.get("product_code") || undefined;
         const category_name = searchParams.get("category_name") || undefined;
         const gender_name = searchParams.get("gender_name") || undefined;
         const getProductListApi = process.env.STAFF_GET_PRODUCT_LIST_API as string;
@@ -19,7 +20,9 @@ export async function GET(request: NextRequest) {
                 page,
                 limit,
                 product_name,
+                product_code,
                 category_name,
+                gender_name
             },
             headers: { Authorization: `Bearer ${token}` }
         });

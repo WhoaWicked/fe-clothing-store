@@ -6,12 +6,17 @@ import { usePathname } from 'next/navigation';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { BsBoxSeam } from "react-icons/bs";
 import { PiNewspaper } from "react-icons/pi";
+import { IoIosList } from "react-icons/io";
+import { GoHome } from "react-icons/go";
+
 
 export const Sidebar: FC = () => {
     const pathname = usePathname();
     const sidebarMenu = [
-        { name: 'Add Product', icon: <IoIosAddCircleOutline size={22} />, href: '/staff/product/add' },
+        // { name: 'Add Product', icon: <IoIosAddCircleOutline size={22} />, href: '/staff/product/add' },
+        { name: 'Dashboard', icon: <GoHome size={20} />, href: '/staff/dashboard' },
         { name: 'Products', icon: <BsBoxSeam size={19} />, href: '/staff/product' },
+        { name: 'Categories & Genders', icon: <IoIosList size={20} />, href: '/staff/category' },
         { name: 'Orders', icon: <PiNewspaper size={22} />, href: '/staff/order' },
     ]
 

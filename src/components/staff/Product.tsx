@@ -11,13 +11,47 @@ import { IoIosInformationCircleOutline } from 'react-icons/io';
 import { CiEdit } from 'react-icons/ci';
 import { PiTrashLight } from 'react-icons/pi';
 import { RxReset } from 'react-icons/rx';
+import { useSearchParams } from 'next/navigation';
+import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
+
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 export const ProductList: FC = () => {
-    const { data: products, error: productError, isLoading: isProductLoading, isValidating, mutate } = useSWR('/api/staff/product', fetcher,
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [searchProductName, setSearchProductName] = useState('');
+    const [productName, setProductName] = useState('');
+    const [searchProductCode, setSearchProductCode] = useState('');
+    const [productCode, setProductCode] = useState('');
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setProductName(searchProductName);
+            setProductCode(searchProductCode);
+            setCurrentPage(1);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchProductName, searchProductCode]);
+
+    const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString(),
+        product_name: productName,
+        product_code: productCode,
+    });
+    const { data: products, error: productError, isLoading: isProductLoading, isValidating, mutate } = useSWR(`/api/staff/product?${params.toString()}`, fetcher,
         { onError: (err) => { console.error('Error fetching product data:', err); } }
     );
+
+    const productList = products?.products || [];
+    const totalPages = products?.pagination?.totalPages || 1;
+
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
 
     return (
         <div id="staff-product-list-components" className='tracking-wide'>
@@ -26,12 +60,12 @@ export const ProductList: FC = () => {
                 <div className='flex justify-between items-start'>
                     <div className='flex items-center gap-x-5'>
                         <div className="w-70 group flex items-center gap-x-4 border border-gray-300 hover:border-gray-500  px-4 py-2.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm">
-                            <GoSearch className="text-gray-400 group-focus-within:text-gray700 duration-300" size={20} />
-                            <input type="text" className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยรหัสสินค้า" />
+                            <GoSearch className="text-gray-400 group-focus-within:text-gray-800 duration-300" size={20} />
+                            <input onChange={(e) => setSearchProductName(e.target.value)} type="text" className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยชื่อสินค้า" />
                         </div>
                         <div className="w-70 group flex items-center gap-x-4 border border-gray-300 hover:border-gray-500  px-4 py-2.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm">
-                            <GoSearch className="text-gray-400 group-focus-within:text-gray-800 duration-300" size={20} />
-                            <input type="text" className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยชื่อสินค้า" />
+                            <GoSearch className="text-gray-400 group-focus-within:text-gray700 duration-300" size={20} />
+                            <input onChange={(e) => setSearchProductCode(e.target.value)} type="text" className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยรหัสสินค้า" />
                         </div>
                     </div>
                     <div className='flex items-center gap-x-5 mb-6'>
@@ -61,7 +95,7 @@ export const ProductList: FC = () => {
                         </tr>
                     </thead>
                     <tbody className='text-gray-900 [&_td]:font-light [&>tr>td]:py-2.5'>
-                        {products?.products?.map((product: any) => (
+                        {productList?.map((product: any) => (
                             <tr key={product.product_id} className='border-b border-gray-300'>
                                 <td className=''>
                                     <div className='flex items-center gap-x-4'>
@@ -85,7 +119,7 @@ export const ProductList: FC = () => {
                                 <td>{product.sum_stock_quantity}</td>
                                 <td className=''>{product.category_name}</td>
                                 <td>{product.gender_name}</td>
-                                <td className=''>{Number(product.base_price).toLocaleString()}</td>
+                                <td className=''>{Number(product.base_price).toLocaleString()} ฿</td>
                                 <td className="">
                                     <p className={`px-3 py-1 rounded-md text-xs border w-fit
                                     ${product.is_active
@@ -118,6 +152,27 @@ export const ProductList: FC = () => {
                         ))}
                     </tbody>
                 </table>
+                {totalPages > 1 && (
+                    <div id='pagination-footer' className='flex justify-end my-5'>
+                        <div className='font-light flex items-center gap-x-5'>
+                            <button
+                                className='text-sm cursor-pointer text-gray-900 border border-gray-300 px-4 py-2 shadow rounded transition-all duration-300 ease-out hover:shadow-md'
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                <SlArrowLeft size={10} />
+                            </button>
+                            <p className='cursor-default text-gray-900 text-sm'>{currentPage} / {totalPages}</p>
+                            <button
+                                className='text-sm cursor-pointer text-gray-900 border border-gray-300 px-4 py-2 shadow rounded transition-all duration-300 ease-out hover:shadow-md'
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <SlArrowRight size={10} />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div >
     )

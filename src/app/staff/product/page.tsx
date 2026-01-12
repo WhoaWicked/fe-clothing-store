@@ -18,7 +18,7 @@ export default function Page() {
                 </div>
                 <p className='font-light text-gray-500'>ดูแลจัดการรายการสินค้าในระบบของคุณได้ที่นี่</p>
             </div>
-            <div>
+            {/* <div>
                 <div className='tracking-wide flex items-center gap-x-10 border-b border-gray-300'>
                     {
                         menuOptions.map((option) => (
@@ -30,9 +30,9 @@ export default function Page() {
                         ))
                     }
                 </div>
-            </div>
+            </div> */}
             <div className='mt-6'>
-                {selectedStatus === 'product' && <ProductList />}
+                <ProductList />
             </div>
         </div>
     )
