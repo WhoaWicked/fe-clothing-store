@@ -21,8 +21,8 @@ interface OrderListProps {
 }
 
 interface CancelOrderPopupProps {
-    mutate: () => void;
     order: any;
+    mutate: () => void;
     onClose: () => void;
 }
 
