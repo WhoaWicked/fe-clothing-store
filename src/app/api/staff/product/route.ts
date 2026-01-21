@@ -36,3 +36,25 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
+
+export async function POST(request: NextRequest) {
+    try {
+        const token = request.cookies.get("token")?.value;
+        if (!token) {
+            return NextResponse.json({ error: "ไม่มีสิทธิ์เข้าถึง" }, { status: 401 });
+        }
+        const formData = await request.formData();
+        const createProductApi = process.env.STAFF_CREATE_PRODUCT_API as string;
+        const response = await axios.post(createProductApi, formData, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const result = response.data;
+        return NextResponse.json(result, { status: 200 });
+    } catch (error: unknown) {
+        console.error("Create Product error:", error);
+        if (axios.isAxiosError(error) && error.response) {
+            return NextResponse.json({ error: error.response.data }, { status: error.response.status });
+        }
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    }
+}

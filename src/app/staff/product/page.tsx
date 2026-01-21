@@ -7,13 +7,11 @@ export default function Page() {
         { label: 'สินค้า', value: 'product' },
         { label: 'หมวดหมู่', value: 'category' }
     ];
-    const [selectedStatus, setSelectedStatus] = useState<string>('product');
-
     return (
         <div id='staff-product-page' className='p-6'>
             <div className='mb-10'>
                 <div className="flex items-center gap-x-3 mb-2">
-                    <h1 className="text-gray-800 text-3xl font-light">จัดการสินค้าและหมวดหมู่</h1>
+                    <h1 className="text-gray-800 text-3xl font-light">จัดการสินค้า</h1>
                     <div className="mt-1 w-12 h-0.75 bg-gray-600"></div>
                 </div>
                 <p className='font-light text-gray-500'>ดูแลจัดการรายการสินค้าในระบบของคุณได้ที่นี่</p>

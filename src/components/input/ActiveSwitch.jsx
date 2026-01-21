@@ -3,7 +3,7 @@ import { Switch } from '@headlessui/react';
 
 export default function ActiveSwitch({ checked, onChange, label = 'สถานะการใช้งาน', activeText = 'เปิด', inactiveText = 'ปิด' }) {
     const handleChange = (isChecked) => {
-        onChange(isChecked ? 1 : 0);
+        onChange(isChecked ? true : false);
     }
     return (
         <div className="flex items-center gap-x-2">
@@ -24,8 +24,8 @@ export default function ActiveSwitch({ checked, onChange, label = 'สถาน�
             </Switch>
             <div className='w-[30px] text-end'>
                 <span className={`text-sm transition-colors duration-300 ${checked
-                        ? 'text-emerald-600'
-                        : 'text-gray-900'
+                    ? 'text-emerald-600'
+                    : 'text-gray-900'
                     }`}>
                     {checked ? activeText : inactiveText}
                 </span>
