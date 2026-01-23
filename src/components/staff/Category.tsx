@@ -30,6 +30,7 @@ export const CategoryList: FC = () => {
     const [category_code, setCategoryCode] = useState('');
     const [searchCategoryName, setSearchCategoryName] = useState('');
     const [searchCategoryCode, setSearchCategoryCode] = useState('');
+    const [isOpenAddCategoryModal, setIsOpenAddCategoryModal] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -180,7 +181,7 @@ export const CategoryList: FC = () => {
                         <div className='w-fit border border-gray-300 p-2.5 hover:border-gray-500 shadow-sm cursor-pointer transition-all duration-300 hover:scale-110'>
                             <RxReset className="text-gray-600 duration-300" size={20} />
                         </div>
-                        <button className='flex items-center gap-x-2 font-light bg-white text-sm cursor-pointer text-gray-700 border border-gray-300 shadow-sm hover:border-gray-500 hover:text-gray-900 px-4 py-2.5 hover:scale-105 transition-all duaration-300'>
+                        <button onClick={() => setIsOpenAddCategoryModal(true)} className='flex items-center gap-x-2 font-light bg-white text-sm cursor-pointer text-gray-700 border border-gray-300 shadow-sm hover:border-gray-500 hover:text-gray-900 px-4 py-2.5 hover:scale-105 transition-all duaration-300'>
                             <GoPlus size={20} />
                             <span>
                                 เพิ่มหมวดหมู่
@@ -190,30 +191,30 @@ export const CategoryList: FC = () => {
                 </div>
             </div>
             <div className=''>
-                <table className='w-full text-sm text-left'>
+                <table className='w-full text-sm text-left table-fixed'>
                     <thead className='text-gray-500 [&_th]:font-light bg-slate-50 border border-gray-300'>
                         <tr className=''>
                             <th className='pl-2.5 py-2.5 w-[20%]'>ชื่อหมวดหมู่</th>
-                            <th className='w-[10%]'>รหัสหมวดหมู่</th>
-                            <th className='w-[10%] text-start'>สถานะการใช้งาน</th>
+                            <th className='w-[20%]'>รหัสหมวดหมู่</th>
+                            <th className='w-[15%] text-start'>สถานะการใช้งาน</th>
                             <th className='w-[15%]'>ผู้สร้าง</th>
-                            <th className='w-[10%]'>วันที่สร้าง</th>
-                            <th className='w-[10%] text-center'>แก้ไข</th>
+                            <th className='w-[15%]'>วันที่สร้าง</th>
+                            <th className='w-[15%] text-center'>แก้ไข</th>
                         </tr>
                     </thead>
                     <tbody className='text-gray-900 [&_td]:font-light [&>tr>td]:py-2.5'>
                         {categoryList?.map((category: any) => (
                             <tr key={category.category_id} className='h-15 border-b border-gray-300'>
                                 {selectIdCategory !== category.category_id ? (
-                                    <td className='pl-2.5'>{category.category_name} </td>
+                                    <td title={category.category_name} className='px-2.5 truncate'>{category.category_name}</td>
                                 ) : (
                                     <td className='pl-2.5'>
                                         <input value={editCategoryName} onChange={(e) => setEditCategoryName(e.target.value)} autoFocus className='w-[90%] border border-gray-300 hover:border-gray-500 text-sm px-4 py-1.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none' type="text" />
                                     </td>
                                 )}
-                                <td>{category.category_code}</td>
-                                <td className='text-start'>
-                                    <div className='flex justify-start  items-center'>
+                                <td title={category.category_code} className='truncate pr-2.5'>{category.category_code}</td>
+                                <td className=''>
+                                    <div className='flex justify-start items-center'>
                                         <ActiveSwitch checked={category.is_active} onChange={(isChecked: boolean) => handleUpdateCategoryStatus(category, isChecked)} activeText='' inactiveText='' />
                                     </div>
                                 </td>
@@ -283,6 +284,91 @@ export const CategoryList: FC = () => {
                         </div>
                     </div>
                 )}
+            </div>
+            {isOpenAddCategoryModal && <AddCategoryModal onClose={() => setIsOpenAddCategoryModal(false)} mutate={mutate} />}
+        </div>
+    )
+}
+
+interface AddCategorryModalProps {
+    onClose: () => void;
+    mutate: () => void;
+}
+
+export const AddCategoryModal: FC<AddCategorryModalProps> = ({ onClose, mutate }) => {
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = 'auto';
+        }
+    }, [])
+
+    const [category_name, setCategoryName] = useState('');
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            if (category_name) {
+                const confirmResult = await Swal.fire({
+                    title: 'ยืนยันการเพิ่มหมวดหมู่',
+                    text: `คุณต้องการเพิ่มหมวดหมู่ "${category_name}" หรือไม่?`,
+                    icon: 'question',
+                    confirmButtonText: 'ยืนยัน',
+                    confirmButtonColor: '#3085d6',
+                    showCancelButton: true,
+                    cancelButtonColor: '#6B7280',
+                    cancelButtonText: 'ยกเลิก'
+                });
+                if (!confirmResult.isConfirmed) return;
+            }
+            const response = await axios.post('/api/staff/category', {
+                category_name
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'เพิ่มหมวดหมู่สำเร็จ',
+                confirmButtonText: 'ตกลง'
+            });
+            mutate();
+            onClose();
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                console.error('Add Category error response:', error.response.data);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เพิ่มหมวดหมู่ไม่สำเร็จ',
+                    text: error.response.data.error.message || 'เกิดข้อผิดพลาดในการเพิ่มหมวดหมู่',
+                    confirmButtonText: 'ตกลง'
+                });
+                return;
+            }
+            console.error('Add Category error:', error);
+        }
+    }
+    return (
+        <div id="staff-add-category-modal-component">
+            <div className="px-4 md:px-0 fixed inset-0 z-40 bg-[rgba(0,0,0,0.4)] flex justify-center items-center">
+                <div className="tracking-[.5px] min-w-80 max-w-100 w-full bg-white rounded-[5px] py-4 shadow-xl relative">
+                    <div className='flex justify-between items-center border-b border-[#E0E0E0] px-4 pb-4 mb-4'>
+                        <div className='flex items-center gap-x-4'>
+                            <h2 className=' font-normal text-gray-800'>เพิ่มหมวดหมู่</h2>
+                        </div>
+                        <button onClick={onClose} className='cursor-pointer p-1.5 bg-[#F3F4F6] rounded-[50%] hover:bg-[#E5E7EB]'>
+                            <RxCross2 size={20} color='#454545' />
+                        </button>
+                    </div>
+                    <div className='px-4 font-light tracking-wide'>
+                        <form action="" onSubmit={handleSubmit} className='space-y-4'>
+                            <div className='flex flex-col space-y-2'>
+                                <label className='text-sm text-gray-700' htmlFor="category_name">ชื่อหมวดหมู่</label>
+                                <input onChange={(e) => setCategoryName(e.target.value)} name='category_name' className="w-full border border-gray-300 hover:border-gray-500  px-4 py-1.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" autoFocus />
+                            </div>
+                            <div className='flex justify-end gap-x-4'>
+                                <button onClick={onClose} type='button' className='text-sm  cursor-pointer rounded shadow px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100'>ยกเลิก</button>
+                                <button type='submit' className='text-sm  cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 '>เพิ่ม</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     )

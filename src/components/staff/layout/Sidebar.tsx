@@ -16,7 +16,7 @@ export const Sidebar: FC = () => {
         // { name: 'Add Product', icon: <IoIosAddCircleOutline size={22} />, href: '/staff/product/add' },
         { name: 'Dashboard', icon: <GoHome size={20} />, href: '/staff/dashboard' },
         { name: 'Products', icon: <BsBoxSeam size={19} />, href: '/staff/product' },
-        { name: 'Categories & Genders', icon: <IoIosList size={20} />, href: '/staff/category' },
+        { name: 'Categories', icon: <IoIosList size={20} />, href: '/staff/category' },
         { name: 'Orders', icon: <PiNewspaper size={22} />, href: '/staff/order' },
     ]
 

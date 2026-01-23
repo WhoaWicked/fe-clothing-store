@@ -8,11 +8,11 @@ export async function GET(req: NextRequest) {
             return NextResponse.json({ error: "ไม่มีสิทธิ์เข้าใช้งาน" }, { status: 401 });
         }
         const { searchParams } = new URL(req.url);
-        const order_status_id = searchParams.get("order_status_id");
+        const order_status_name = searchParams.get("order_status_name");
         const getOrderListApi = process.env.USER_GET_ORDER_LIST_API as string;
         const response = await axios.get(getOrderListApi, {
             params: {
-                order_status_id
+                order_status_name
             },
             headers: { Authorization: `Bearer ${token}` }
         });

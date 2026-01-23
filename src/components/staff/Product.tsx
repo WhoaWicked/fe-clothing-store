@@ -114,7 +114,7 @@ export const ProductList: FC = () => {
                 </div>
             </div>
             <div className=''>
-                <table className='w-full text-sm text-left'>
+                <table className='w-full text-sm text-left table-fixed'>
                     <thead className='text-gray-500 [&_th]:font-light bg-slate-50 border border-gray-300'>
                         <tr className=''>
                             <th className='pl-2.5 py-2.5 w-[25%]'>สินค้า</th>
@@ -152,15 +152,6 @@ export const ProductList: FC = () => {
                                 <td className=''>{product.category_name}</td>
                                 <td>{product.gender_name}</td>
                                 <td className=''>{Number(product.base_price).toLocaleString()}</td>
-                                {/* <td className="">
-                                    <p className={`px-3 py-1 rounded-md text-xs border w-fit
-                                    ${product.is_active
-                                            ? 'border-green-200 text-green-600 bg-green-50'
-                                            : 'border-red-200 text-red-600 bg-red-50'}`}
-                                    >
-                                        {product.is_active ? 'เปิดขาย' : 'ยกเลิก'}
-                                    </p>
-                                </td> */}
                                 <td className=''>
                                     <div className='flex justify-center items-center'>
                                         <ActiveSwitch checked={product.is_active} onChange={(isChecked: boolean) => handleUpdateStatus(product.product_id, isChecked)} activeText='' inactiveText='' />
@@ -174,17 +165,6 @@ export const ProductList: FC = () => {
                                         >
                                             <IoIosInformationCircleOutline className="text-gray-600" size={20} />
                                         </button>
-                                        {/* <button
-                                                className="cursor-pointer size-9 flex justify-center items-center rounded-full border border-gray-300 duration-200 hover:border-gray-500 hover:shadow-[0px_0px_10px_#00000014]"
-                                            >
-                                                <CiEdit className="text-gray-600" size={20} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteProduct(product.product_id)}
-                                                className="cursor-pointer size-9 flex justify-center items-center rounded-full border border-gray-300 duration-200 hover:border-gray-500 hover:shadow-[0px_0px_10px_#00000014]"
-                                            >
-                                                <PiTrashLight className="text-gray-600" size={20} />
-                                            </button> */}
                                     </div>
                                 </td>
                             </tr>

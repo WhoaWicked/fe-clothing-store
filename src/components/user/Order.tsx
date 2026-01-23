@@ -17,7 +17,7 @@ import { OrderListSkeleton } from './OrderSkeleton';
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 interface OrderListProps {
-    statusId: number | null;
+    statusName: string | null;
 }
 
 interface CancelOrderPopupProps {
@@ -33,13 +33,14 @@ const formatThaiDate = (dateString: string) => {
         .toFormat('d LLLL yyyy HH:mm');
 };
 
-export const OrderList: FC<OrderListProps> = ({ statusId }) => {
+export const OrderList: FC<OrderListProps> = ({ statusName }) => {
     const router = useRouter();
-    const { data, error, isLoading, mutate } = useSWR(`/api/user/order?order_status_id=${statusId}`, fetcher, {
+    const { data, error, isLoading, mutate } = useSWR(`/api/user/order?order_status_name=${statusName}`, fetcher, {
         onError: (err) => {
             console.error("Error fetching orders:", err);
         }
     });
+
     const [orderDetails, setOrderDetails] = useState<number | null>(null);
     const [selectCancelOrderId, setSelectCancelOrderId] = useState<number | null>(null);
     const toggleOrderDetails = (orderId: number) => {
@@ -47,7 +48,7 @@ export const OrderList: FC<OrderListProps> = ({ statusId }) => {
     }
     useEffect(() => {
         setOrderDetails(null);
-    }, [statusId]);
+    }, [statusName]);
 
     if (isLoading) {
         return (

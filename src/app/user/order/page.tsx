@@ -5,14 +5,14 @@ import { AiFillInfoCircle } from 'react-icons/ai';
 
 export default function Page() {
   const statusOptions = [
-    { label: 'ทั้งหมด', value: null },
-    { label: 'รอชำระเงิน', value: 1 },
-    { label: 'รอจัดส่ง', value: 2 },
-    { label: 'กำลังจัดส่ง', value: 3 },
-    { label: 'สำเร็จ', value: 4 },
-    { label: 'ยกเลิก', value: 5 },
+    { label: 'ทั้งหมด', value: '' },
+    { label: 'รอชำระเงิน', value: 'pending_payment' },
+    { label: 'รอจัดส่ง', value: 'processing' },
+    { label: 'กำลังจัดส่ง', value: 'shipping' },
+    { label: 'สำเร็จ', value: 'completed' },
+    { label: 'ยกเลิก', value: 'cancelled' },
   ];
-  const [selectedStatus, setSelectedStatus] = useState<number | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
   return (
     <div id="user-order-page" className='mt-20'>
       <div>
@@ -45,7 +45,7 @@ export default function Page() {
           </div>
         </div>
       </div>
-      <OrderList statusId={selectedStatus} />
+      <OrderList statusName={selectedStatus} />
     </div>
   )
 }
