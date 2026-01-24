@@ -202,7 +202,7 @@ export const CategoryList: FC = () => {
                             <th className='w-[15%] text-center'>แก้ไข</th>
                         </tr>
                     </thead>
-                    <tbody className='text-gray-900 [&_td]:font-light [&>tr>td]:py-2.5'>
+                    <tbody className='text-gray-700 [&_td]:font-light [&>tr>td]:py-2.5'>
                         {categoryList?.map((category: any) => (
                             <tr key={category.category_id} className='h-15 border-b border-gray-300'>
                                 {selectIdCategory !== category.category_id ? (

@@ -126,7 +126,7 @@ export const ProductList: FC = () => {
                             <th className='w-[10%] text-center'>จัดการสินค้า</th>
                         </tr>
                     </thead>
-                    <tbody className='text-gray-900 [&_td]:font-light [&>tr>td]:py-2.5'>
+                    <tbody className='text-gray-700 [&_td]:font-light [&>tr>td]:py-2.5'>
                         {productList?.map((product: any) => (
                             <tr key={product.product_id} className='border-b border-gray-300'>
                                 <td className=''>
@@ -286,7 +286,7 @@ const AddProductModal: FC<AddProductModalProps> = ({ onClose, mutate }) => {
             const response = await axios.post('/api/staff/product', formData);
             Swal.fire({
                 icon: 'success',
-                title: response.data.message || 'สร้างสินค้าสำเร็จ sss',
+                title: response.data.message || 'สร้างสินค้าสำเร็จ',
                 confirmButtonText: 'ตกลง'
             });
             mutate();

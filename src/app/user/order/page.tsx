@@ -8,8 +8,8 @@ export default function Page() {
     { label: 'ทั้งหมด', value: '' },
     { label: 'รอชำระเงิน', value: 'pending_payment' },
     { label: 'รอจัดส่ง', value: 'processing' },
-    { label: 'กำลังจัดส่ง', value: 'shipping' },
-    { label: 'สำเร็จ', value: 'completed' },
+    { label: 'กำลังจัดส่ง', value: 'shipped' },
+    { label: 'สำเร็จ', value: 'delivered' },
     { label: 'ยกเลิก', value: 'cancelled' },
   ];
   const [selectedStatus, setSelectedStatus] = useState<string>('');
