@@ -8,9 +8,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
             return NextResponse.json({ error: "ไม่มีสิทธิ์เข้าถึง" }, { status: 401 });
         }
         const { id } = await params;
+        const { tracking_number } = await request.json();
         const shippedOrderApi = process.env.STAFF_SHIPPED_ORDER_API as string;
         const apiUrl = shippedOrderApi.replace("{orderId}", id);
-        const response = await axios.patch(apiUrl, null, {
+        const response = await axios.patch(apiUrl, { tracking_number }, {
             headers: { Authorization: `Bearer ${token}` },
         });
         const result = response.data;

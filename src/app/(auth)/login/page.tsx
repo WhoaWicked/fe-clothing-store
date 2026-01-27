@@ -41,7 +41,7 @@ export default function Login() {
             if (role === 'user') {
                 router.push('/user');
             } else if (role === 'staff') {
-                router.push('/staff');
+                router.push('/staff/order');
             }
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {

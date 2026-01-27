@@ -27,8 +27,8 @@ interface CancelOrderPopupProps {
 }
 
 const formatThaiDate = (dateString: string) => {
-    return DateTime.fromISO(dateString, { zone: 'utc' })
-        .setZone('Asia/Bangkok')
+    return DateTime.fromISO(dateString)
+        .plus({ hours: 7 })
         .setLocale('th')
         .toFormat('d LLLL yyyy HH:mm');
 };

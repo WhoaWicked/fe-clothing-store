@@ -12,13 +12,19 @@ export async function GET(request: NextRequest) {
         const limit = searchParams.get('limit');
         const search_global = searchParams.get('search_global') || undefined;
         const status_name = searchParams.get('status_name') || undefined;
+        const start_date = searchParams.get('start_date') || undefined;
+        const end_date = searchParams.get('end_date') || undefined;
+        const sort_type = searchParams.get('sort_type') || undefined;
         const getOrderListApi = process.env.STAFF_GET_ORDER_LIST_API as string;
         const response = await axios.get(getOrderListApi, {
             params: {
                 page,
                 limit,
                 search_global,
-                status_name
+                status_name,
+                start_date,
+                end_date,
+                sort_type
             },
             headers: {
                 Authorization: `Bearer ${token}`

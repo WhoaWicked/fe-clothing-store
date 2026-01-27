@@ -17,8 +17,8 @@ import { PiTrashLight } from 'react-icons/pi';
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 const formatThaiDate = (dateString: string) => {
-    return DateTime.fromISO(dateString, { zone: 'utc' })
-        .setZone('Asia/Bangkok')
+    return DateTime.fromISO(dateString)
+        .plus({ hours: 7 })
         .setLocale('th')
         .toFormat('d LLLL yyyy HH:mm');
 };
@@ -44,8 +44,8 @@ export const CategoryList: FC = () => {
     const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: itemsPerPage.toString(),
-        category_name: category_name,
-        category_code: category_code,
+        category_name: category_name.trim(),
+        category_code: category_code.trim(),
     });
 
     const { data: categories, error: categoriesError, isLoading: categoriesLoading, mutate } = useSWR(`/api/staff/category?${params.toString()}`, fetcher,
@@ -196,9 +196,9 @@ export const CategoryList: FC = () => {
                         <tr className=''>
                             <th className='pl-2.5 py-2.5 w-[20%]'>ชื่อหมวดหมู่</th>
                             <th className='w-[20%]'>รหัสหมวดหมู่</th>
-                            <th className='w-[15%] text-start'>สถานะการใช้งาน</th>
-                            <th className='w-[15%]'>ผู้สร้าง</th>
                             <th className='w-[15%]'>วันที่สร้าง</th>
+                            <th className='w-[15%]'>ผู้สร้าง</th>
+                            <th className='w-[10%]'>สถานะการใช้งาน</th>
                             <th className='w-[15%] text-center'>แก้ไข</th>
                         </tr>
                     </thead>
@@ -213,13 +213,13 @@ export const CategoryList: FC = () => {
                                     </td>
                                 )}
                                 <td title={category.category_code} className='truncate pr-2.5'>{category.category_code}</td>
+                                <td>{formatThaiDate(category.created_at)}</td>
+                                <td>{category.creator_name}</td>
                                 <td className=''>
-                                    <div className='flex justify-start items-center'>
+                                    <div className='flex justify-center items-center'>
                                         <ActiveSwitch checked={category.is_active} onChange={(isChecked: boolean) => handleUpdateCategoryStatus(category, isChecked)} activeText='' inactiveText='' />
                                     </div>
                                 </td>
-                                <td>{category.creator_name}</td>
-                                <td>{formatThaiDate(category.created_at)}</td>
                                 <td className=''>
                                     {selectIdCategory !== category.category_id ? (
                                         <div className="flex items-center justify-center gap-x-4">

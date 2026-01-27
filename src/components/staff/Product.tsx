@@ -20,8 +20,8 @@ import { PiImages } from "react-icons/pi";
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 const formatThaiDate = (dateString: string) => {
-    return DateTime.fromISO(dateString, { zone: 'utc' })
-        .setZone('Asia/Bangkok')
+    return DateTime.fromISO(dateString)
+        .plus({ hours: 7 })
         .setLocale('th')
         .toFormat('d LLLL yyyy HH:mm');
 };
@@ -48,8 +48,8 @@ export const ProductList: FC = () => {
     const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: itemsPerPage.toString(),
-        product_name: productName,
-        product_code: productCode,
+        product_name: productName.trim(),
+        product_code: productCode.trim(),
     });
     const { data: products, error: productError, isLoading: isProductLoading, isValidating, mutate } = useSWR(`/api/staff/product?${params.toString()}`, fetcher,
         { onError: (err) => { console.error('Error fetching product data:', err); } }

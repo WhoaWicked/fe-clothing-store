@@ -103,7 +103,7 @@ export function Products() {
                 limit: 10,
                 gender_name: selectGenders ? selectGenders.join(',') : undefined,
                 category_name: selectCategories ? selectCategories.join(',') : undefined,
-                product_name: productName || undefined
+                product_name: productName.trim() || undefined
             }]; // เพิ่ม / ข้างหน้า และส่ง page parameter
     }
     const { data, size, setSize, isLoading: isProductLoading, error, mutate, isValidating } = useSWRInfinite(
