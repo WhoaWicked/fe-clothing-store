@@ -113,6 +113,20 @@ export const OrderList: FC<{ statusName: string }> = ({ statusName }) => {
         setSortType('newest');
     }
 
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (sortMenuRef.current && !sortMenuRef.current.contains(event.target as Node)) {
+                setSortMenuOpen(false);
+            }
+        }
+        if (sortMenuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [sortMenuOpen]);
+
     return (
         <div id="staff-order-list-component">
             <div>
@@ -355,7 +369,6 @@ export const OrderDetailModal: FC<OrderDetailModalProps> = ({ order, onClose, mu
         )
 
     }
-
 
     return (
         <div id="staff-order-detail-modal-component">

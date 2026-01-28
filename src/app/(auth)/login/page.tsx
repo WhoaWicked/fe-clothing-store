@@ -38,10 +38,16 @@ export default function Login() {
                 return decoded.role;
             }
             const role = getRoleFromToken(result.access_token);
-            if (role === 'user') {
-                router.push('/user');
-            } else if (role === 'staff') {
-                router.push('/staff/order');
+            switch (role) {
+                case 'user':
+                    router.push('/user');
+                    break;
+                case 'staff':
+                    router.push('/staff/order');
+                    break;
+                case 'admin':
+                    router.push('/admin');
+                    break;
             }
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {
