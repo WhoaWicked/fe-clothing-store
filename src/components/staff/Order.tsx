@@ -197,7 +197,7 @@ export const OrderList: FC<{ statusName: string }> = ({ statusName }) => {
                             <th className=' w-[10%]'>ลูกค้า</th>
                             <th className=' w-[10%]'>ยอดรวม (บาท)</th>
                             <th className=' w-[10%]'>สถานะ</th>
-                            <th className=' w-[5%]'>ขนส่ง</th>
+                            <th className=' w-[10%]'>ขนส่ง</th>
                             <th className='text-center w-[10%]'>จัดการ</th>
                         </tr>
                     </thead>
@@ -206,7 +206,7 @@ export const OrderList: FC<{ statusName: string }> = ({ statusName }) => {
                             <tr className='border-b border-gray-300' key={order.order_id}>
                                 <td title={order.order_code} className='px-2.5 truncate'>{order.order_code}</td>
                                 <td>{formatThaiDate(order.created_at)}</td>
-                                <td>{order.customer_name}</td>
+                                <td className='pr-2.5 truncate'>{order.customer_name}</td>
                                 <td>{Number(order.total_amount).toLocaleString()}</td>
                                 <td>
                                     <div className={`border ${statusLabels[order.order_status]?.borderColor} ${statusLabels[order.order_status]?.textColor} ${statusLabels[order.order_status]?.bgColor} rounded-full w-fit px-3 py-1`}>

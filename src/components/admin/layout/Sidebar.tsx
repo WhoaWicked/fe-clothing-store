@@ -15,7 +15,7 @@ export const Sidebar: FC = () => {
     const sidebarMenu = [
         // { name: 'Add Product', icon: <IoIosAddCircleOutline size={22} />, href: '/staff/product/add' },
         { name: 'Activity Logs', icon: <PiNewspaper size={22} />, href: '/admin/log' },
-        { name: 'Users', icon: <PiUser size={19} />, href: '/admin/manage-user' },
+        { name: 'Manage Users', icon: <PiUser size={19} />, href: '/admin/manage-user' },
     ]
 
     return (
