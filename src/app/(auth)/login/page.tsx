@@ -5,6 +5,7 @@ import { PiShoppingBagLight, PiUser } from "react-icons/pi";
 import { SlLock } from "react-icons/sl";
 import Swal, { SweetAlertIcon } from "sweetalert2";
 import axios from "axios";
+import { signIn, getSession } from "next-auth/react";
 
 export default function Login() {
     const router = useRouter();
@@ -30,32 +31,20 @@ export default function Login() {
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             e.preventDefault();
-            const response = await axios.post('/api/auth/login', { email, password });
-            const result = response.data;
-            function getRoleFromToken(token: string) {
-                const payload = token.split('.')[1];
-                const decoded = JSON.parse(atob(payload));
-                return decoded.role;
-            }
-            const role = getRoleFromToken(result.access_token);
-            switch (role) {
-                case 'user':
-                    router.push('/user');
-                    break;
-                case 'staff':
-                    router.push('/staff/order');
-                    break;
-                case 'admin':
-                    router.push('/admin');
-                    break;
+            const response = await signIn("credentials", {
+                email,
+                password,
+                redirect: false
+            });
+            if (response?.error) {
+                console.error("Login error:", response.error);
+                await swalAuthAlert(401, response.error);
+            } else {
+                router.push("/user/product");
+                router.refresh();
             }
         } catch (error: unknown) {
-            if (axios.isAxiosError(error) && error.response) {
-                console.error("Login error:", error.response.data.error.message);
-                await swalAuthAlert(error.response.status, error.response.data.error.message);
-            } else {
-                console.error("Login error:", error);
-            }
+            console.error('Login error:', error);
         }
     }
 

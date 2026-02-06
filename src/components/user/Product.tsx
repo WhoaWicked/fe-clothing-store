@@ -80,14 +80,14 @@ export function Products() {
     const { data: genderList, error: genderError, isLoading: genderLoading } = useSWR('/api/user/product/filter/gender', fetcher,
         {
             onError: (error) => {
-                console.log('Gender Fetch Error:', error);
+                console.log('Gender Fetch Error:', error.response?.data);
             }
         }
     );
     const { data: categoryList, error: categoryError, isLoading: categoryLoading } = useSWR('/api/user/product/filter/category', fetcher,
         {
             onError: (error) => {
-                console.log('Category Fetch Error:', error);
+                console.log('Category Fetch Error:', error.response?.data);
             }
         }
     );
@@ -111,7 +111,7 @@ export function Products() {
         ([url, params]: [string, ProductParams]) => axios.get(url, { params }).then(res => res.data), // fetcher ที่รับ parameter ได้ 
         {
             onError: (error) => {
-                console.error('Product List Fetch Error:', error);
+                console.error('Product List Fetch Error:', error.response?.data);
             }
         }
     );

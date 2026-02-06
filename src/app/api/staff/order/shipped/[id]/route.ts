@@ -3,7 +3,8 @@ import axios from "axios";
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const token = request.cookies.get('token')?.value;
+        const session = await getServerSession(authOptions);
+        const token = session?.user.accessToken;
         if (!token) {
             return NextResponse.json({ error: "ไม่มีสิทธิ์เข้าถึง" }, { status: 401 });
         }

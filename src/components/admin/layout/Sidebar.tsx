@@ -14,7 +14,7 @@ export const Sidebar: FC = () => {
     const pathname = usePathname();
     const sidebarMenu = [
         // { name: 'Add Product', icon: <IoIosAddCircleOutline size={22} />, href: '/staff/product/add' },
-        { name: 'Activity Logs', icon: <PiNewspaper size={22} />, href: '/admin/log' },
+        { name: 'Activity Logs', icon: <PiNewspaper size={22} />, href: '/admin/activity-log' },
         { name: 'Manage Users', icon: <PiUser size={19} />, href: '/admin/manage-user' },
     ]
 

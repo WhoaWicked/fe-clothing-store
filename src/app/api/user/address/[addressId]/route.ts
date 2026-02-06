@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
+import { getServerSession } from 'next-auth';
+import { authOptions } from "../../../auth/[...nextauth]/route";
+
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ addressId: string }> }) {
     try {
-        const token = req.cookies.get("token")?.value;
+        const session = await getServerSession(authOptions);
+        const token = session?.user.accessToken;
         if (!token) {
             return NextResponse.json({ error: "ไม่มีสิทธิ์เข้าถึง" }, { status: 401 });
         }
@@ -28,7 +32,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ addr
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ addressId: string }> }) {
     try {
-        const token = req.cookies.get("token")?.value;
+        const session = await getServerSession(authOptions);
+        const token = session?.user.accessToken;
         if (!token) {
             return NextResponse.json({ error: "ไม่มีสิทธิ์เข้าถึง" }, { status: 401 });
         }
@@ -63,7 +68,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ addr
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ addressId: string }> }) {
     try {   
-        const token = req.cookies.get("token")?.value;
+        const session = await getServerSession(authOptions);
+        const token = session?.user.accessToken;
         if (!token) {
             return NextResponse.json({ error: "ไม่มีสิทธิ์เข้าถึง" }, { status: 401 });
         }

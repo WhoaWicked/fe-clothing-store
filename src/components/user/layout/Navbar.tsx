@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { useCart } from '@/context/user/cartContext';
 import { PiHeartStraightLight } from "react-icons/pi";
 import { LiaHeart } from 'react-icons/lia';
+import { signOut } from 'next-auth/react';
 
 export const Navbar: FC = () => {
     const router = useRouter();
@@ -27,8 +28,7 @@ export const Navbar: FC = () => {
                 cancelButtonText: 'ยกเลิก'
             });
             if (!result.isConfirmed) return;
-            await axios.post('/api/auth/logout');
-            router.push('/login');
+            await signOut({ callbackUrl: '/login' });
         } catch (error: unknown) {
             console.log('Logout Error:', error);
         }
@@ -70,7 +70,7 @@ export const Navbar: FC = () => {
                                 <div className='z-20 absolute right-0 top-6 bg-white pt-2'>
                                     <div className='border border-gray-300  w-40  shadow-sm'>
                                         <ul className='font-light text-gray-900 text-sm tracking-wide'>
-                                            <li  className='hover:bg-gray-200 p-3 cursor-pointer'>โปรไฟล์ผู้ใช้</li>
+                                            <li className='hover:bg-gray-200 p-3 cursor-pointer'>โปรไฟล์ผู้ใช้</li>
                                             <li onClick={() => router.push('/user/order')} className='hover:bg-gray-200 p-3 cursor-pointer'>รายการสั่งซื้อ</li>
                                             <li onClick={() => router.push('/user/address')} className='hover:bg-gray-200 p-3 cursor-pointer'>ที่อยู่จัดส่ง</li>
                                             <li className='hover:bg-gray-200 p-3 cursor-pointer' onClick={handleLogout}>ออกจากระบบ</li>

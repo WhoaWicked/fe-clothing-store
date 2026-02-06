@@ -38,6 +38,7 @@ export const UserList: FC = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setSearchGlobal(searchGlobalDebounced);
+            setCurrentPage(1);
         }, 500);
         return () => clearTimeout(timer);
     }, [searchGlobalDebounced]);
