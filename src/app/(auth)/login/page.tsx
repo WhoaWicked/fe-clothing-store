@@ -40,7 +40,18 @@ export default function Login() {
                 console.error("Login error:", response.error);
                 await swalAuthAlert(401, response.error);
             } else {
-                router.push("/user/product");
+                const session = await getSession();
+                switch (session?.user.role) {
+                    case 'user':
+                        router.push("/user/product");
+                        break;
+                    case 'staff':
+                        router.push("/staff/order");
+                        break;
+                    case 'admin':
+                        router.push("/admin/activity-log");
+                        break;
+                }
                 router.refresh();
             }
         } catch (error: unknown) {

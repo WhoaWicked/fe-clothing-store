@@ -286,7 +286,7 @@ export const LogDetailModal: FC<LogDetailModalProps> = ({ log, onClose, mutate }
                         </button>
                     </div>
                     <div className='px-4 font-light tracking-wide overflow-y-auto'>
-                        <div className='border border-gray-200 shadow-md p-5 mb-5 rounded'>
+                        <div className='border border-gray-300 p-5 mb-5 rounded'>
                             <div className='flex gap-x-4 mb-5'>
                                 <div className='relative size-15 rounded-full overflow-hidden'>
                                     <div className='bg-gray-100 size-full absolute flex flex-col justify-center items-center space-y-4'>
@@ -300,14 +300,14 @@ export const LogDetailModal: FC<LogDetailModalProps> = ({ log, onClose, mutate }
                             </div>
                             <div className='flex justify-between items-center'>
                                 <p className='text-sm text-gray-500'>Role : {log.snapshot_role}</p>
-                                <p className={`uppercase ${log.current_active_status ? 'text-green-600 bg-green-100 ' : 'text-red-600 bg-red-100'} text-sm font-medium w-fit px-3 py-1 rounded`}>{log.current_active_status ? 'Active User' : 'Inactive User'}</p>
+                                <p className={` ${log.current_active_status ? 'text-green-600 bg-green-100 ' : 'text-red-600 bg-red-100'} text-sm font-medium w-fit px-3 py-1 rounded`}>{log.current_active_status ? 'Active User' : 'Inactive User'}</p>
                             </div>
                         </div>
                         <div className=''>
                             <p className='uppercase font-medium text-xs text-gray-400 mb-4'>Active Type</p>
                             <div className='flex items-center gap-x-4 mb-4'>
                                 <p className='text-sm text-gray-600 font-medium bg-gray-100 w-fit px-3 py-1 rounded'>{log.action_type}</p>
-                                <p className={`uppercase ${log.is_success ? 'text-green-600 bg-green-100 ' : 'text-red-600 bg-red-100'} text-sm font-medium w-fit px-3 py-1 rounded`}>{log.is_success ? 'Success' : 'Failed'}</p>
+                                <p className={` ${log.is_success ? 'text-green-600 bg-green-100 ' : 'text-red-600 bg-red-100'} text-sm font-medium w-fit px-3 py-1 rounded`}>{log.is_success ? 'Success' : 'Failed'}</p>
                                 {log?.details?.status && (
                                     <p className={`uppercase ${'text-red-600 bg-red-100'} text-sm font-medium w-fit px-3 py-1 rounded`}>{log?.details?.status}</p>
                                 )}
