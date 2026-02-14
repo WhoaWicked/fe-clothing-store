@@ -64,75 +64,88 @@ export default function Page() {
           </div>
         </div>
       </section>
-      <div className="w-full py-3 bg-black text-white overflow-hidden">
+      <div className="w-full py-4 bg-neutral-900 border-t border-b border-gray-800 text-white overflow-hidden">
 
         {/* Container หลัก: ต้องมี flex เพื่อให้ข้อความ 2 ชุดเรียงต่อกัน */}
-        <div className="flex w-full whitespace-nowrap">
+        <div className="flex w-full whitespace-nowrap group">
 
           {/* --- ชุดที่ 1 (ตัววิ่งหลัก) --- */}
           {/* animate-marquee: สั่งให้วิ่ง */}
           {/* min-w-full: ยืดให้เต็มจอเสมอ */}
-          <div className="animate-marquee flex min-w-full justify-around items-center">
-            <span className="text-base tracking-wide font-light mx-8">NEW COLLECTION</span>
-            <span className="text-base tracking-wide font-light mx-8">FREE SHIPPING</span>
-            <span className="text-base tracking-wide font-light mx-8">SALE 50%</span>
-            <span className="text-base tracking-wide font-light mx-8">LIMITED EDITION</span>
+          <div className="animate-marquee flex min-w-full justify-around items-center py-2">
+            <span className="text-xs md:text-sm tracking-[0.3em] font-medium mx-12 text-gray-400 uppercase">New Collection</span>
+            <span className="text-xs md:text-sm tracking-[0.3em] font-medium mx-12 text-gray-400 uppercase">Free Worldwide Shipping</span>
+            <span className="text-xs md:text-sm tracking-[0.3em] font-bold mx-12 text-white uppercase italic">Sale 50% Off</span>
+            <span className="text-xs md:text-sm tracking-[0.3em] font-medium mx-12 text-gray-400 uppercase">Limited Edition</span>
           </div>
 
           {/* --- ชุดที่ 2 (ตัววิ่งสำรอง - สำคัญมาก!) --- */}
           {/* ต้องเหมือนชุดที่ 1 เป๊ะๆ เพื่อให้ตอนวนลูปมันเนียน */}
-          <div className="animate-marquee flex min-w-full justify-around items-center">
-            <span className="text-base tracking-wide font-light mx-8">NEW COLLECTION</span>
-            <span className="text-base tracking-wide font-light mx-8">FREE SHIPPING</span>
-            <span className="text-base tracking-wide font-light mx-8">SALE 50%</span>
-            <span className="text-base tracking-wide font-light mx-8">LIMITED EDITION</span>
+          <div className="animate-marquee flex min-w-full justify-around items-center py-2">
+            <span className="text-xs md:text-sm tracking-[0.3em] font-medium mx-12 text-gray-400 uppercase">New Collection</span>
+            <span className="text-xs md:text-sm tracking-[0.3em] font-medium mx-12 text-gray-400 uppercase">Free Worldwide Shipping</span>
+            <span className="text-xs md:text-sm tracking-[0.3em] font-bold mx-12 text-white uppercase italic">Sale 50% Off</span>
+            <span className="text-xs md:text-sm tracking-[0.3em] font-medium mx-12 text-gray-400 uppercase">Limited Edition</span>
           </div>
 
         </div>
       </div>
-      <section className="container mx-auto px-4 mt-20">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 h-[600px] md:h-[800px]">
+      <section className="container mx-auto px-4 mt-24">
+        <div className="text-center mb-16">
+           <span className="text-xs font-bold tracking-[0.3em] text-gray-400 uppercase block mb-4">Discover</span>
+           <h2 className="text-4xl md:text-5xl font-light uppercase tracking-[0.1em] text-gray-900">Curated Looks</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 h-[600px] md:h-[800px]">
 
           {/* รูปใหญ่ด้านซ้าย (กินพื้นที่ 2 คอลัมน์ 2 แถว) */}
-          <div className="col-span-2 row-span-2 relative group overflow-hidden">
+          <div className="col-span-2 row-span-2 relative group overflow-hidden cursor-pointer">
             <Image
               src="https://images.unsplash.com/photo-1716541425064-b07b68f436de?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
               alt="Main Look"
               fill
-              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 ease-in-out group-hover:scale-105"
             />
-
+             <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
+            <div className="absolute bottom-8 left-8 text-white opacity-0 group-hover:opacity-100 transition-all duration-700 transform translate-y-4 group-hover:translate-y-0">
+               <h3 className="text-2xl font-normal tracking-widest uppercase mb-1">Urban Minimalist</h3>
+               <p className="text-xs text-gray-300 tracking-wider">View Collection</p>
+            </div>
           </div>
 
           {/* รูปเล็กขวาบน */}
-          <div className="relative group overflow-hidden">
+          <div className="relative group overflow-hidden cursor-pointer">
             <Image
               src="https://images.unsplash.com/photo-1503342394128-c104d54dba01?q=80&w=600&auto=format&fit=crop"
               alt="Detail"
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-110"
             />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
           </div>
 
           {/* รูปเล็กขวาบน (2) */}
-          <div className="relative group overflow-hidden bg-gray-100 flex items-center justify-center">
-            <div className="text-center p-6 ">
-              <h3 className="text-4xl font-black uppercase tracking-wide mb-2">Sale</h3>
-              <p className="text-gray-500 text-sm mb-4">Up to 50% Off</p>
-              <span onClick={() => router.push('/user/product')} className="border-b border-black pb-1 text-xs font-bold uppercase cursor-pointer">Shop Now</span>
+          <div className="relative group overflow-hidden bg-neutral-50 flex items-center justify-center p-8 border border-gray-100 hover:border-black transition-colors duration-300">
+            <div className="text-center z-10">
+              <h3 className="text-6xl font-black uppercase tracking-tighter mb-0 italic leading-none">Sale</h3>
+              <p className="text-gray-500 text-xs mb-8 tracking-[0.2em] uppercase mt-2">Up to 50% Off</p>
+              <button onClick={() => router.push('/user/product')} className="group-hover:bg-black group-hover:text-white px-8 py-3 border border-black text-xs font-bold uppercase transition-all duration-300 tracking-widest">
+                Shop Now
+              </button>
             </div>
           </div>
 
           {/* รูปยาวขวาล่าง (กินพื้นที่ 2 คอลัมน์) */}
-          <div className="col-span-2 relative group overflow-hidden">
+          <div className="col-span-2 relative group overflow-hidden cursor-pointer">
             <Image
               src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop"
               alt="Texture"
               fill
-              className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
+              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-90"
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <h2 className="text-white text-3xl font-light tracking-[0.5em] uppercase drop-shadow-md">Accessories</h2>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all duration-500">
+              <div className="border border-white/30 px-12 py-6 backdrop-blur-sm group-hover:border-white transition-all duration-500">
+                <h2 className="text-white text-xl md:text-3xl font-light tracking-[0.4em] uppercase shadow-black drop-shadow-lg">Accessories</h2>
+              </div>
             </div>
           </div>
         </div>
