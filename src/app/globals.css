@@ -26,9 +26,23 @@ body {
 }
 
 .swal2-font-lighter {
-    font-weight: lighter !important;
+  font-weight: lighter !important;
 }
 
 .swal2-font-normal {
-    font-weight: normal !important;
+  font-weight: normal !important;
+}
+
+@theme {
+  --animate-marquee: marquee 25s linear infinite;
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+
+    100% {
+      transform: translateX(-100%);
+    }
+  }
 }

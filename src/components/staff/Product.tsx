@@ -483,6 +483,7 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
     const [selectedGender, setSelectedGender] = useState<any>({ value: product.gender_id, label: product.gender_name });
     const [editVariants, setEditVariants] = useState<any>(product?.variants || []);
     const presetSizes = ['XS', 'S', 'M', 'L', 'XL', '2XL'];
+    const [image, setImage] = useState<File | null>(product?.image_path || null);
 
     const toggleVariantSize = (sizeLabel: string) => {
         const exists = editVariants.find((v: any) => v.size === sizeLabel);
@@ -542,6 +543,15 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
         setIsEditMode(true)
     }
 
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setImage(e.target.files[0]);
+            setPreviewUrl(URL.createObjectURL(e.target.files[0]));
+        }
+    };
+
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -567,6 +577,9 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
             formData.append('is_active', String(is_active));
             formData.append('best_seller', String(best_seller));
             formData.append('variants', JSON.stringify(editVariants));
+            if (image) {
+                formData.append('image', image);
+            }
             const response = await axios.put(`/api/staff/product/${product.product_id}`, formData);
             Swal.fire({
                 icon: 'success',
@@ -610,16 +623,45 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
                         <form action="" onSubmit={handleSave}>
                             <div className={`flex items-start justify-between mb-5`}>
                                 <div className='flex items-start gap-x-4'>
-                                    <div className='relative size-30 border border-gray-300 overflow-hidden shadow'>
-                                        {product.image_path ? (
-                                            <Image src={product.image_path} alt={product.product_name} fill />
-                                        ) : (
-                                            <div className='bg-gray-100 size-full absolute flex flex-col justify-center items-center space-y-4'>
-                                                <FaLayerGroup size={30} className=' text-gray-300 ' />
-                                                <p className='text-xs text-gray-500 font-light tracking-wide'>ไม่มีภาพสินค้า</p>
+                                    {!isEditMode ? (
+                                        <div className='relative size-30 border border-gray-300 overflow-hidden shadow'>
+                                            {product.image_path ? (
+                                                <Image src={product.image_path} alt={product.product_name} fill />
+                                            ) : (
+                                                <div className='bg-gray-100 size-full absolute flex flex-col justify-center items-center space-y-4'>
+                                                    <FaLayerGroup size={30} className=' text-gray-300 ' />
+                                                    <p className='text-xs text-gray-500 font-light tracking-wide'>ไม่มีภาพสินค้า</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <div className='flex flex-col space-y-2'>
+                                            <label className='text-xs text-gray-800' htmlFor="">รูปภาพสินค้า</label>
+                                            <div className='bg-slate-100 size-30 py-4 border-2 border-dashed border-gray-300 hover:border-gray-500 duration-300 group'>
+                                                <div className='flex justify-center items-center h-full'>
+                                                    <div
+                                                        className={`relative size-40 w-full`}
+                                                        style={{ cursor: 'pointer', overflow: 'hidden' }}
+                                                    >
+                                                        {previewUrl ? (
+                                                            <Image src={previewUrl} fill alt="preview" className='absolute object-contain' />
+                                                        ) : (
+                                                            <div className='flex flex-col items-center justify-center h-full gap-y-2'>
+                                                                <PiImagesSquareLight className='text-gray-300 group-hover:text-gray-500 duration-300' size={40} />
+                                                                {/* <p className='text-xs text-left text-gray-400 group-hover:text-gray-600 duration-300 tracking-wide'>ลากและวางไฟล์ หรือคลิกเพื่อเลือกไฟล์</p> */}
+                                                            </div>
+                                                        )}
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                                                            onChange={handleFileChange}
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                     <div className=''>
                                         {!isEditMode ? (
                                             <div className='flex items-center gap-x-4 mb-2'>
