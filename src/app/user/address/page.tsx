@@ -1,6 +1,10 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { AddressList } from '@/components/user/Address';
+import dynamic from 'next/dynamic';
+const AddressList = dynamic(
+    () => import('@/components/user/Address').then((mod) => mod.AddressList),
+    { ssr: false } // <--- พระเอกของเราคือบรรทัดนี้ครับ
+);
 
 export default function Page() {
     return (
