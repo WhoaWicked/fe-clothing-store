@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 import { getServerSession } from 'next-auth';
-import { authOptions } from "../../auth/[...nextauth]/route";
+// import { authOptions } from "../../auth/[...nextauth]/route";
+import { authOptions } from "../../../../auth/[...nextauth]/route";
+
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
