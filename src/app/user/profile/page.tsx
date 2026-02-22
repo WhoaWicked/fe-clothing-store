@@ -23,6 +23,7 @@ const mockUser = {
 };
 
 const formatThaiDate = (dateString: string) => {
+    if (!dateString) return '';
     return DateTime.fromISO(dateString)
         .plus({ hours: 7 })
         .setLocale('th')
