@@ -9,6 +9,8 @@ import { RxCross2 } from 'react-icons/rx';
 import { AddressSkeleton } from './AddressSkeleton';
 import { GoHome } from 'react-icons/go';
 import { SiHomeadvisor } from 'react-icons/si';
+import { ThailandAddressTypeahead, ThailandAddressValue, } from "react-thailand-address-typeahead";
+
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 export const AddressList: FC = () => {
@@ -22,6 +24,10 @@ export const AddressList: FC = () => {
         zip_code: "",
         phone: ""
     });
+    const [thaiAddress, setThaiAddress] = useState<ThailandAddressValue>(
+        ThailandAddressValue.empty()
+    );
+
     const [editAddress, setEditAddress] = useState(null);
     const { data, error, isLoading, mutate } = useSWR('/api/user/address', fetcher,
         { onError: (err) => console.error(err) }
@@ -37,9 +43,9 @@ export const AddressList: FC = () => {
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            if (address.first_name && address.last_name && address.street && address.sub_district && address.district && address.province && address.zip_code && address.phone) {
+            if (address.first_name && address.last_name && address.street && address.phone && thaiAddress.subdistrict && thaiAddress.district && thaiAddress.province && thaiAddress.postalCode) {
                 const confirmResult = await Swal.fire({
-                    title: 'ยืนยันการแก้ไขที่อยู่',
+                    title: 'ยืนยันการเพิ่มที่อยู่ใหม่',
                     text: `คุณต้องการบันทึกการเปลี่ยนแปลงที่อยู่นี้หรือไม่?`,
                     icon: 'question',
                     confirmButtonText: 'ยืนยัน',
@@ -50,7 +56,17 @@ export const AddressList: FC = () => {
                 });
                 if (!confirmResult.isConfirmed) return;
             }
-            await axios.post('/api/user/address', address);
+            const addressData = {
+                first_name: address.first_name,
+                last_name: address.last_name,
+                street: address.street,
+                sub_district: thaiAddress.subdistrict,
+                district: thaiAddress.district,
+                province: thaiAddress.province,
+                zip_code: thaiAddress.postalCode,
+                phone: address.phone
+            }
+            await axios.post('/api/user/address', addressData);
             Swal.fire({
                 title: 'สร้างที่อยู่ใหม่สำเร็จ',
                 icon: 'success',
@@ -67,6 +83,7 @@ export const AddressList: FC = () => {
                 zip_code: "",
                 phone: ""
             })
+            setThaiAddress(ThailandAddressValue.empty());
             mutate();
         } catch (error: unknown) {
             if (axios.isAxiosError(error) && error.response) {
@@ -173,13 +190,43 @@ export const AddressList: FC = () => {
                             <div>
                                 <input name='street' value={address.street} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type='text' placeholder='ที่อยู่ / ถนน / บ้านเลขที่' />
                             </div>
-                            <div className='flex gap-x-4'>
+                            {/* <div className='flex gap-x-4'>
                                 <input name='sub_district' value={address.sub_district} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='ตำบาล / แขวง' />
                                 <input name='district' value={address.district} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='อำเภอ / เขต' />
                             </div>
                             <div className='flex gap-x-4'>
                                 <input name='province' value={address.province} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='จังหวัด' />
                                 <input name='zip_code' value={address.zip_code} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='รหัสไปรษณีย์' />
+                            </div> */}
+                            <div className='relative'>
+                                <ThailandAddressTypeahead
+                                    value={thaiAddress}
+                                    onValueChange={(val) => setThaiAddress(val)}
+                                >
+                                    <div className='grid grid-cols-2 gap-4'>
+                                        <ThailandAddressTypeahead.SubdistrictInput
+                                            className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                            placeholder='ตำบล / แขวง'
+                                        />
+                                        <ThailandAddressTypeahead.DistrictInput
+                                            className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                            placeholder='อำเภอ / เขต'
+                                        />
+                                        <ThailandAddressTypeahead.ProvinceInput
+                                            className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                            placeholder='จังหวัด'
+                                        />
+                                        <ThailandAddressTypeahead.PostalCodeInput
+                                            className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                            placeholder='รหัสไปรษณีย์'
+                                        />
+                                    </div>
+                                    <ThailandAddressTypeahead.Suggestion
+                                        containerProps={{
+                                            className: "absolute z-50 w-[85%] mt-2 bg-white font-light text-sm text-gray-800 tracking-wide border-2 border-gray-400 cursor-pointer max-h-60 overflow-y-auto shadow-xl [&>*]:hover:bg-gray-100 [&>*]:p-2"
+                                        }}
+                                    />
+                                </ThailandAddressTypeahead>
                             </div>
                             <div className='flex gap-x-4'>
                                 <input name='phone' value={address.phone} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='เบอร์โทรศัพท์' />
@@ -220,6 +267,14 @@ export const EditAddressPopup: FC<EditAddressPopupProps> = ({ addressData, onClo
         zip_code: addressData.zip_code,
         phone: addressData.phone
     });
+    const [thaiAddress, setThaiAddress] = useState<ThailandAddressValue>(
+        ThailandAddressValue.fromDatasourceItem({
+            s: addressData.sub_district,
+            d: addressData.district,
+            p: addressData.province,
+            po: addressData.zip_code
+        })
+    );
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setAddress({
@@ -231,7 +286,7 @@ export const EditAddressPopup: FC<EditAddressPopupProps> = ({ addressData, onClo
         e.preventDefault();
         try {
             const addressId = addressData.id;
-            if (address.first_name && address.last_name && address.street && address.sub_district && address.district && address.province && address.zip_code && address.phone) {
+            if (address.first_name && address.last_name && address.street && thaiAddress.subdistrict && thaiAddress.district && thaiAddress.province && thaiAddress.postalCode && address.phone) {
                 const confirmResult = await Swal.fire({
                     title: 'ยืนยันการแก้ไขที่อยู่',
                     text: `คุณต้องการบันทึกการเปลี่ยนแปลงที่อยู่นี้หรือไม่?`,
@@ -244,7 +299,17 @@ export const EditAddressPopup: FC<EditAddressPopupProps> = ({ addressData, onClo
                 });
                 if (!confirmResult.isConfirmed) return;
             }
-            await axios.put(`/api/user/address/${addressId}`, address);
+            const addressForAPI = {
+                first_name: address.first_name,
+                last_name: address.last_name,
+                street: address.street,
+                sub_district: thaiAddress.subdistrict,
+                district: thaiAddress.district,
+                province: thaiAddress.province,
+                zip_code: thaiAddress.postalCode,
+                phone: address.phone
+            }
+            await axios.put(`/api/user/address/${addressId}`, addressForAPI);
             Swal.fire({
                 title: 'แก้ไขที่อยู่สำเร็จ',
                 icon: 'success',
@@ -297,7 +362,7 @@ export const EditAddressPopup: FC<EditAddressPopupProps> = ({ addressData, onClo
                                     <label className='text-sm text-gray-700' htmlFor="street">ที่อยู่ / ถนน / บ้านเลขที่</label>
                                     <input name='street' value={address.street} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type='text' placeholder='ที่อยู่ / ถนน / บ้านเลขที่' />
                                 </div>
-                                <div className='grid grid-cols-2 gap-x-4'>
+                                {/* <div className='grid grid-cols-2 gap-x-4'>
                                     <div className='flex flex-col space-y-2'>
                                         <label className='text-sm text-gray-700' htmlFor="sub_district">ตำบล / แขวง</label>
                                         <input name='sub_district' value={address.sub_district} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='ตำบาล / แขวง' />
@@ -316,6 +381,48 @@ export const EditAddressPopup: FC<EditAddressPopupProps> = ({ addressData, onClo
                                         <label className='text-sm text-gray-700' htmlFor="zip_code">รหัสไปรษณีย์</label>
                                         <input name='zip_code' value={address.zip_code} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='รหัสไปรษณีย์' />
                                     </div>
+                                </div> */}
+                                <div className='relative'>
+                                    <ThailandAddressTypeahead
+                                        value={thaiAddress}
+                                        onValueChange={(val) => setThaiAddress(val)}
+                                    >
+                                        <div className='grid grid-cols-2 gap-4'>
+                                            <div className='flex flex-col space-y-2'>
+                                                <label className='text-sm text-gray-700' htmlFor="province">ตำบล / แขวง</label>
+                                                <ThailandAddressTypeahead.SubdistrictInput
+                                                    className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                                    placeholder='ตำบล / แขวง'
+                                                />
+                                            </div>
+                                            <div className='flex flex-col space-y-2'>
+                                                <label className='text-sm text-gray-700' htmlFor="province">อำเภอ / เขต</label>
+                                                <ThailandAddressTypeahead.DistrictInput
+                                                    className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                                    placeholder='อำเภอ / เขต'
+                                                />
+                                            </div>
+                                            <div className='flex flex-col space-y-2'>
+                                                <label className='text-sm text-gray-700' htmlFor="province">จังหวัด</label>
+                                                <ThailandAddressTypeahead.ProvinceInput
+                                                    className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                                    placeholder='จังหวัด'
+                                                />
+                                            </div>
+                                            <div className='flex flex-col space-y-2'>
+                                                <label className='text-sm text-gray-700' htmlFor="province">รหัสไปรษณีย์</label>
+                                                <ThailandAddressTypeahead.PostalCodeInput
+                                                    className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                                    placeholder='รหัสไปรษณีย์'
+                                                />
+                                            </div>
+                                        </div>
+                                        <ThailandAddressTypeahead.Suggestion
+                                            containerProps={{
+                                                className: "shadow-xl absolute z-50 w-[85%] mt-2 bg-white font-light text-sm text-gray-800 tracking-wide border-2 border-gray-400 cursor-pointer max-h-50 overflow-y-auto [&>*]:hover:bg-gray-100 [&>*]:p-2"
+                                            }}
+                                        />
+                                    </ThailandAddressTypeahead>
                                 </div>
                                 <div className='grid grid-cols-1 '>
                                     <div className='flex flex-col space-y-2'>

@@ -134,7 +134,7 @@ export function ProductByCode() {
                                                 setSelectVariantId(data.id);
                                                 setIsMounted(false);
                                             }}
-                                            className={`${selectVariantId === data.id && 'border-gray-600 text-gray-800 shadow-md'} ${stock === 0 ? 'bg-gray-200 cursor-default' : 'cursor-pointer hover:border-gray-600 hover:shadow-md hover:text-gray-800'} size-12 bg-gray-50 text-md border-2 font-light border-gray-300 text-gray-600 transition-all duration-100 `}
+                                            className={`${selectVariantId === data.id && 'border-gray-600 text-gray-800 shadow-md'} ${stock === 0 ? 'bg-gray-200 cursor-default' : 'cursor-pointer hover:border-gray-600 hover:shadow-md hover:text-gray-800 active:scale-90'} size-12 bg-gray-50 text-md border-2 font-light border-gray-300 text-gray-600 transition-all duration-100 `}
                                         >
                                             {data.size}
                                         </button>
