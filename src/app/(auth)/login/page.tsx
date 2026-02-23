@@ -29,7 +29,7 @@ export default function Login() {
         }
     }, [session, status, handleRedirectByRole]);
 
-    if (status === 'loading' || status === 'authenticated') {
+    if (status === 'authenticated' && session?.user.role) {
         return (
             <div className="h-screen flex flex-col items-center justify-center gap-4">
                 <div className="size-12 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin">
@@ -93,7 +93,11 @@ export default function Login() {
         // } catch (error: unknown) {
         //     console.error('Google Login error:', error);
         // }
-        await signIn('google', { callbackUrl: '/login' });
+        try {
+            await signIn('google', { callbackUrl: '/' });
+        } catch (error: unknown) {
+            console.error('Google Login error:', error);
+        }
     }
     return (
         <div id="login-page">

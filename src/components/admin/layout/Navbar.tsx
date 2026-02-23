@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { RiShutDownLine } from 'react-icons/ri';
+import { signOut } from 'next-auth/react';
 
 export const Navbar: FC = () => {
     const router = useRouter();
@@ -20,14 +21,14 @@ export const Navbar: FC = () => {
                 cancelButtonText: 'ยกเลิก'
             });
             if (!result.isConfirmed) return;
-            await axios.post('/api/auth/logout');
-            router.push('/login');
+            await signOut({ callbackUrl: '/login' });
+
         } catch (error: unknown) {
             console.log('Logout Error:', error);
         }
     }
     return (
-        <nav id="user-navbar"
+        <nav id="admin-navbar"
             className=' py-4 border-b border-gray-300'>
             <div className='flex justify-between items-center max-w-350 mx-auto'>
                 <div>
