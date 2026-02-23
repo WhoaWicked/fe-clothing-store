@@ -10,18 +10,6 @@ import axios from 'axios';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
 
-const mockUser = {
-    id: 3,
-    username: 'Somguy',
-    email: 'user@gmail.com',
-    prefix_id: 1,
-    prefix_name: 'นาย',
-    first_name: 'สมกาย',
-    last_name: 'สมเท่',
-    phone: '0812345678',
-    created_at: '2025-12-16T07:00:06.851Z',
-};
-
 const formatThaiDate = (dateString: string) => {
     if (!dateString) return '';
     return DateTime.fromISO(dateString)

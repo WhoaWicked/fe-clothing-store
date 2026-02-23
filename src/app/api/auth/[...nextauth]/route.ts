@@ -1,9 +1,14 @@
 import axios from "axios";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: AuthOptions = {
     providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        }),
         CredentialsProvider({
             name: 'Credentials',
             credentials: {},
@@ -38,10 +43,34 @@ export const authOptions: AuthOptions = {
         })
     ],
     callbacks: {
-        async jwt({ token, user }) {
-            if (user) {
-                token.role = user.role;
-                token.accessToken = user.accessToken;
+        async jwt({ token, user, account, profile }) {
+            if (user && account) {
+                if (account.provider === 'credentials') {
+                    token.role = user.role;
+                    token.accessToken = user.accessToken;
+                } else if (account.provider === 'google') {
+                    try {
+                        const googleLoginApi = process.env.LOGIN_WITH_GOOGLE_API as string;
+                        const response = await axios.post(googleLoginApi, {
+                            email: token.email,
+                            name: token.name,
+                            googleId: profile?.sub,
+                            image: token.picture
+                        });
+                        const accessToken = response.data?.data?.access_token;
+                        const payload = accessToken.split('.')[1];
+                        const decoded = JSON.parse(Buffer.from(payload, 'base64').toString());
+                        token.role = decoded.role;
+                        token.accessToken = accessToken;
+                    } catch (error: unknown) {
+                        if (axios.isAxiosError(error)) {
+                            console.error("Google Login Error:", error.response?.data?.message || error.message);
+                            throw new Error(error.response?.data?.message || error.message);
+                        } else {
+                            console.error("Google Login Error:", error);
+                        }
+                    }
+                }
             }
             return token;
         },

@@ -1,16 +1,44 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PiScissorsLight, PiShoppingBagLight, PiUser } from "react-icons/pi";
 import { SlLock } from "react-icons/sl";
 import Swal, { SweetAlertIcon } from "sweetalert2";
 import axios from "axios";
-import { signIn, getSession } from "next-auth/react";
+import { signIn, getSession, useSession } from "next-auth/react";
+import Image from "next/image";
 
 export default function Login() {
     const router = useRouter();
+    const { data: session, status } = useSession();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+
+    const handleRedirectByRole = useCallback((role: string) => {
+        switch (role) {
+            case 'user': router.push("/user/product"); break;
+            case 'staff': router.push("/staff/order"); break;
+            case 'admin': router.push("/admin/activity-log"); break;
+        }
+        router.refresh();
+    }, [router]);
+
+    useEffect(() => {
+        if (status === 'authenticated' && session?.user.role) {
+            handleRedirectByRole(session.user.role);
+        }
+    }, [session, status, handleRedirectByRole]);
+
+    if (status === 'loading' || status === 'authenticated') {
+        return (
+            <div className="h-screen flex flex-col items-center justify-center gap-4">
+                <div className="size-12 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin">
+                </div>
+                <p className="text-gray-500 text-sm">กำลังเข้าสู่ระบบ . . .</p>
+            </div>
+        );
+    }
+
     const swalAuthAlert = async (status: number, serverMessage: string) => {
         let icon: SweetAlertIcon = 'error';
         const title = 'ไม่สามารถเข้าสู่ระบบได้';
@@ -28,6 +56,7 @@ export default function Login() {
             confirmButtonText: 'ตกลง'
         });
     }
+
     const handleSubmit = async (e: React.FormEvent) => {
         try {
             e.preventDefault();
@@ -41,24 +70,31 @@ export default function Login() {
                 await swalAuthAlert(401, response.error);
             } else {
                 const session = await getSession();
-                switch (session?.user.role) {
-                    case 'user':
-                        router.push("/user/product");
-                        break;
-                    case 'staff':
-                        router.push("/staff/order");
-                        break;
-                    case 'admin':
-                        router.push("/admin/activity-log");
-                        break;
+                if (session?.user.role) {
+                    handleRedirectByRole(session.user.role);
                 }
-                router.refresh();
             }
         } catch (error: unknown) {
             console.error('Login error:', error);
         }
     }
-
+    const handleGoogleLogin = async () => {
+        // try {
+        //     const response = await signIn('google', { redirect: false });
+        //     if (response?.error) {
+        //         console.error('Google Login error:', response.error);
+        //         await swalAuthAlert(401, response.error);
+        //     } else {
+        //         const session = await getSession();
+        //         if (session?.user.role) {
+        //             handleRedirectByRole(session.user.role);
+        //         }
+        //     }
+        // } catch (error: unknown) {
+        //     console.error('Google Login error:', error);
+        // }
+        await signIn('google', { callbackUrl: '/login' });
+    }
     return (
         <div id="login-page">
             {/* <div className="h-screen grid grid-cols-[2fr_1fr]">
@@ -159,6 +195,28 @@ export default function Login() {
                                     <div className="bg-black  duration-300 shadow-md cursor-pointer hover:shadow-lg hover:scale-105 active:scale-95">
                                         <button type="submit" className="p-3 text-center text-sm w-full cursor-pointer  font-light text-white tracking-wide ">เข้าสู่ระบบ</button>
                                     </div>
+                                    <div className="flex items-center gap-x-3">
+                                        <div className="flex-1 h-px bg-gray-300"></div>
+                                        <span className="text-xs text-gray-400 font-light">หรือ</span>
+                                        <div className="flex-1 h-px bg-gray-300"></div>
+                                    </div>
+
+                                    {/* Google Login Button */}
+                                    <button
+                                        type="button"
+                                        onClick={handleGoogleLogin}
+                                        className="cursor-pointer w-full flex items-center justify-center gap-x-3 border border-gray-300 px-4 py-2.5 shadow-md duration-300 hover:shadow-lg hover:scale-105 active:scale-95"
+                                    >
+                                        <Image
+                                            src="https://www.google.com/favicon.ico"
+                                            alt="Google"
+                                            width={20}
+                                            height={20}
+                                        />
+                                        <span className="text-sm font-light text-gray-600 tracking-wide">
+                                            เข้าสู่ระบบด้วย Google
+                                        </span>
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -167,4 +225,5 @@ export default function Login() {
             </div>
         </div>
     )
+
 }
