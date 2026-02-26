@@ -13,6 +13,7 @@ import { IoIosInformationCircleOutline } from 'react-icons/io';
 import { CiEdit } from 'react-icons/ci';
 import { IoCheckmarkDoneOutline } from 'react-icons/io5';
 import { PiTrashLight } from 'react-icons/pi';
+import { FaLayerGroup } from 'react-icons/fa';
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
@@ -203,7 +204,48 @@ export const CategoryList: FC = () => {
                         </tr>
                     </thead>
                     <tbody className='text-gray-700 [&_td]:font-light [&>tr>td]:py-2.5'>
-                        {categoryList?.map((category: any) => (
+                        {categoriesLoading ? (
+                            // 💀 โซน Skeleton Loading (จำลองแถวขึ้นมา 5 แถว)
+                            Array.from({ length: 10 }).map((_, index) => (
+                                <tr className='h-15 border-b border-gray-300' key={`skeleton-category-${index}`}>
+                                    {/* ชื่อหมวดหมู่ */}
+                                    <td className='pl-2.5'><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div></td>
+                                    {/* รหัสหมวดหมู่ */}
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div></td>
+                                    {/* วันที่สร้าง */}
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-2/3"></div></td>
+                                    {/* ผู้สร้าง */}
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div></td>
+                                    {/* สถานะการใช้งาน (จำลองสวิตช์ Toggle) */}
+                                    <td>
+                                        <div className='flex justify-center items-center'>
+                                            <div className="h-6 w-11 bg-gray-200 rounded-full animate-pulse"></div>
+                                        </div>
+                                    </td>
+                                    {/* แก้ไข (จำลองปุ่ม Action 2 ปุ่มติดกัน) */}
+                                    <td>
+                                        <div className="flex items-center justify-center gap-x-4">
+                                            <div className="size-9 bg-gray-200 rounded-full animate-pulse"></div>
+                                            <div className="size-9 bg-gray-200 rounded-full animate-pulse"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : categoryList.length === 0 ? (
+                            <tr>
+                                <td colSpan={6}>
+                                    <div className='mt-20 h-full w-full flex flex-col items-center justify-center tracking-wide '>
+                                        <div className='mb-10'>
+                                            <FaLayerGroup size={40} className=' text-gray-300 ' />
+                                        </div>
+                                        <div className='flex items-center flex-col justify-center space-y-2 mb-6'>
+                                            <h3 className='text-lg font-normal text-gray-800'>ยังไม่มีรายการหมวดหมู่</h3>
+                                            <p className='text-sm font-light text-gray-600'>กรุณาทำการเพิ่มรายการหมวดหมู่</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : categoryList?.map((category: any) => (
                             <tr key={category.category_id} className='h-15 border-b border-gray-300'>
                                 {selectIdCategory !== category.category_id ? (
                                     <td title={category.category_name} className='px-2.5 truncate'>{category.category_name}</td>

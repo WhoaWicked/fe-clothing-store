@@ -143,20 +143,72 @@ export const UserList: FC = () => {
                                 <th className='px-2.5 py-2.5 w-[15%]'>ชื่อผู้ใช้</th>
                                 <th className='w-[15%]'>ชื่อจริง</th>
                                 <th className='w-[15%]'>อีเมล</th>
-                                <th className='w-[15%]'>เบอร์โทรศัพท์</th>
+                                <th className='w-[15%]'>เข้าสู่ระบบด้วย</th>
                                 <th className='w-[15%]'>บทบาท</th>
                                 <th className='w-[10%]'>สถานะ</th>
                                 <th className='w-[10%] text-center'>จัดการ</th>
                             </tr>
                         </thead>
                         <tbody className='text-gray-700 [&_td]:font-light [&>tr>td]:py-2.5'>
-                            {usersList?.map((user: any) => (
+                            {userLoading ? (
+                                // 💀 โซน Skeleton Loading (จำลองแถวขึ้นมา 5 แถว)
+                                Array.from({ length: 10 }).map((_, index) => (
+                                    <tr className='border-b border-gray-300' key={`skeleton-user-${index}`}>
+                                        {/* ชื่อผู้ใช้ */}
+                                        <td className='px-2.5'>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                                        </td>
+                                        {/* ชื่อจริง */}
+                                        <td className='pr-2.5'>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-2/3"></div>
+                                        </td>
+                                        {/* อีเมล */}
+                                        <td className='pr-2.5'>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-4/5"></div>
+                                        </td>
+                                        {/* เข้าสู่ระบบด้วย */}
+                                        <td>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                                        </td>
+                                        {/* บทบาท */}
+                                        <td>
+                                            <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                                        </td>
+                                        {/* สถานะ (จำลองสวิตช์ Toggle) */}
+                                        <td>
+                                            <div>
+                                                <div className="h-6 w-11 bg-gray-200 rounded-full animate-pulse"></div>
+                                            </div>
+                                        </td>
+                                        {/* จัดการ (จำลองปุ่ม Info) */}
+                                        <td>
+                                            <div className="flex items-center justify-center gap-x-4">
+                                                <div className="size-9 bg-gray-200 rounded-full animate-pulse"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : usersList.length === 0 ? (
+                                <tr>
+                                    <td colSpan={7}>
+                                        <div className='mt-20 h-full w-full flex flex-col items-center justify-center tracking-wide '>
+                                            <div className='mb-10'>
+                                                <PiUser className="text-gray-400" size={40} />
+                                            </div>
+                                            <div className='flex items-center flex-col justify-center space-y-2 mb-6'>
+                                                <h3 className='text-lg font-normal text-gray-800'>ยังไม่มีรายการผู้ใช้งาน</h3>
+                                                <p className='text-sm font-light text-gray-600'>กรุณารอให้ผู้ใช้งานทำการลงทะเบียน</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ) : usersList?.map((user: any) => (
                                 <tr key={user.id} className='border-b border-gray-300'>
 
                                     <td className='px-2.5 truncate'>{user.username}</td>
                                     <td className='pr-2.5 truncate'>{user.full_name}</td>
                                     <td className='pr-2.5 truncate'>{user.email}</td>
-                                    <td className=''>{user.phone}</td>
+                                    <td className=''>{user.provider}</td>
                                     <td>{user.role_name}</td>
                                     <td className=''>
                                         <div className=''>
@@ -570,7 +622,7 @@ export const UserDetailPopup: FC<UserDetailPopupProps> = ({ user, onClose, mutat
                                             </div>
                                             <div className='border border-gray-300 bg-gray-50 px-3 py-2 space-y-1'>
                                                 <p className='text-xs text-gray-500'>รหัสผ่าน</p>
-                                                <p className='text-sm text-gray-900'>{user.password ? '********' : ''}</p>
+                                                <p className='text-sm text-gray-900'>{user.password ? '********' : '-'}</p>
                                             </div>
                                             <div className='border border-gray-300 bg-gray-50 px-3 py-2 space-y-1'>
                                                 <p className='text-xs text-gray-500'>บทบาท</p>
@@ -607,11 +659,11 @@ export const UserDetailPopup: FC<UserDetailPopupProps> = ({ user, onClose, mutat
                                             </div>
                                             <div className='border border-gray-300 bg-gray-50 px-3 py-2 space-y-1'>
                                                 <p className='text-xs text-gray-500'>เบอร์โทรศัพท์</p>
-                                                <p className='text-sm text-gray-900'>{user.phone}</p>
+                                                <p className='text-sm text-gray-900'>{user.phone || '-'}</p>
                                             </div>
                                             <div className='border border-gray-300 bg-gray-50 px-3 py-2 space-y-1'>
                                                 <p className='text-xs text-gray-500'>คำนำหน้า</p>
-                                                <p className='text-sm text-gray-900'>{user.prefix_name}</p>
+                                                <p className='text-sm text-gray-900'>{user.prefix_name || '-'}</p>
                                             </div>
                                         </div>
                                     ) : (

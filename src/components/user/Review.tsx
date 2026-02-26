@@ -220,8 +220,10 @@ export const ReviewList: FC = () => {
                                 )}
                             </div>
                             {isLoading ? (
-                                <div className='h-115 flex flex-col justify-center items-center'>
-                                    <AiOutlineLoading3Quarters className="animate-spin text-gray-200" size={60} />
+                                <div className="h-115 flex flex-col items-center justify-center gap-4">
+                                    <div className="size-15 border-4 border-gray-300 border-t-gray-900 rounded-full animate-spin">
+                                    </div>
+                                    {/* <p className="text-gray-500 text-sm">กำลังเข้าสู่ระบบ . . .</p> */}
                                 </div>)
                                 : data?.length === 0 ? (
                                     <div className='h-115 flex flex-col items-center mt-10 justify-center tracking-wide '>

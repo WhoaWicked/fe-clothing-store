@@ -10,8 +10,10 @@ import { ProductNoImage } from './ProductSkeleton';
 import { SlArrowLeft } from 'react-icons/sl';
 import { AiFillInfoCircle } from "react-icons/ai";
 import useSWR from 'swr';
-import { HiOutlineHome } from 'react-icons/hi2';
+import { HiOutlineHome, HiOutlineShoppingBag } from 'react-icons/hi2';
 import { RxCross2 } from 'react-icons/rx';
+import { ThailandAddressTypeahead, ThailandAddressValue, } from "react-thailand-address-typeahead";
+import { PiMapPinAreaLight } from 'react-icons/pi';
 
 const showErrorAlert = (message: string) => {
     Swal.fire({
@@ -26,7 +28,7 @@ const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 export function Checkout() {
     const router = useRouter();
-    const { cartData } = useCart();
+    const { cartData, cartIsLoading } = useCart();
     const { items } = cartData || {};
     const [openAddressPopup, setOpenAddressPopup] = useState(false);
     const [address, setAddress] = useState({
@@ -39,6 +41,8 @@ export function Checkout() {
         zip_code: "",
         phone: ""
     });
+    const [thaiAddress, setThaiAddress] = useState<ThailandAddressValue>(ThailandAddressValue.empty);
+
     const handleSelect = (selectedAddress: any) => {
         setAddress({
             first_name: selectedAddress.first_name,
@@ -50,6 +54,12 @@ export function Checkout() {
             zip_code: selectedAddress.zip_code,
             phone: selectedAddress.phone
         });
+        setThaiAddress(ThailandAddressValue.fromDatasourceItem({
+            s: selectedAddress.sub_district,
+            d: selectedAddress.district,
+            p: selectedAddress.province,
+            po: selectedAddress.zip_code
+        }))
         setOpenAddressPopup(false);
     }
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,8 +72,18 @@ export function Checkout() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const addressData = {
+                first_name: address.first_name,
+                last_name: address.last_name,
+                street: address.street,
+                sub_district: thaiAddress.subdistrict,
+                district: thaiAddress.district,
+                province: thaiAddress.province,
+                zip_code: thaiAddress.postalCode,
+                phone: address.phone
+            }
             const response = await axios.post('/api/user/order/place-order', {
-                shippingAddress: address
+                shippingAddress: addressData
             });
 
             if (response.status === 200 && response.data) {
@@ -107,13 +127,35 @@ export function Checkout() {
                             <div>
                                 <input name='street' value={address.street} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type='text' placeholder='ที่อยู่ / ถนน / บ้านเลขที่' />
                             </div>
-                            <div className='flex gap-x-4'>
-                                <input name='sub_district' value={address.sub_district} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='ตำบาล / แขวง' />
-                                <input name='district' value={address.district} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='อำเภอ / เขต' />
-                            </div>
-                            <div className='flex gap-x-4'>
-                                <input name='province' value={address.province} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='จังหวัด' />
-                                <input name='zip_code' value={address.zip_code} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='รหัสไปรษณีย์' />
+                            <div className='relative'>
+                                <ThailandAddressTypeahead
+                                    value={thaiAddress}
+                                    onValueChange={(val) => setThaiAddress(val)}
+                                >
+                                    <div className='grid grid-cols-2 gap-4'>
+                                        <ThailandAddressTypeahead.SubdistrictInput
+                                            className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                            placeholder='ตำบล / แขวง'
+                                        />
+                                        <ThailandAddressTypeahead.DistrictInput
+                                            className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                            placeholder='อำเภอ / เขต'
+                                        />
+                                        <ThailandAddressTypeahead.ProvinceInput
+                                            className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                            placeholder='จังหวัด'
+                                        />
+                                        <ThailandAddressTypeahead.PostalCodeInput
+                                            className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none"
+                                            placeholder='รหัสไปรษณีย์'
+                                        />
+                                    </div>
+                                    <ThailandAddressTypeahead.Suggestion
+                                        containerProps={{
+                                            className: "absolute z-50 w-[85%] mt-2 bg-white font-light text-sm text-gray-800 tracking-wide border-2 border-gray-400 cursor-pointer max-h-60 overflow-y-auto shadow-xl [&>*]:hover:bg-gray-100 [&>*]:p-2"
+                                        }}
+                                    />
+                                </ThailandAddressTypeahead>
                             </div>
                             <div className='flex gap-x-4'>
                                 <input name='phone' value={address.phone} onChange={handleChange} className="w-full border border-gray-300 hover:border-gray-500  px-4 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none" type="text" placeholder='เบอร์โทรศัพท์' />
@@ -132,7 +174,25 @@ export function Checkout() {
                         <div className='mb-4 border-b border-gray-300 pb-4'>
                             <h2 className='text-xl mb-5'>รายการสินค้า</h2>
                             <div className='pt-4 pr-4 max-h-90 overflow-y-scroll'>
-                                {items?.map((item: any) => (
+                                {cartIsLoading ? (
+                                    <div>
+                                        {Array.from({ length: 2 }).map((_, idx) => (
+                                            <div key={idx} className="flex justify-between items-start mb-6 animate-pulse">
+                                                <div className="flex gap-x-5">
+                                                    {/* Image Skeleton */}
+                                                    <div className="size-25 aspect-square bg-gray-200 rounded relative" />
+                                                    {/* Content Skeleton */}
+                                                    <div>
+                                                        <div className="h-5 bg-gray-200 rounded w-32 mb-2" />
+                                                        <div className="h-4 bg-gray-200 rounded w-16" />
+                                                    </div>
+                                                </div>
+                                                {/* Price Skeleton */}
+                                                <div className="h-5 bg-gray-200 rounded w-16" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : items?.map((item: any) => (
                                     <div key={item.item_id}>
                                         <div className='flex justify-between items-start space-y-5'>
                                             <div className='flex gap-x-5'>
@@ -233,6 +293,7 @@ const AddressListPopup: FC<AddressListPopupProps> = ({ onClose, onSelectAddress 
     const { data, error, isLoading } = useSWR('/api/user/address', fetcher,
         { onError: (err) => console.error("Error fetching addresses:", err) }
     );
+    const router = useRouter();
     return (
         <div id="user-address-list-popup-component">
             <div className="px-4 md:px-0 fixed inset-0 z-40 bg-[rgba(0,0,0,0.4)] flex justify-center items-center">
@@ -247,7 +308,28 @@ const AddressListPopup: FC<AddressListPopupProps> = ({ onClose, onSelectAddress 
                     </div>
                     <div className='px-6 pr-2 font-light '>
                         <div className='space-y-5 h-95.5 overflow-y-auto pr-4'>
-                            {data?.map((address: any) => (
+                            {isLoading ? (
+                                <div>
+                                    {Array.from({ length: 3 }).map((_, idx) => (
+                                        <div key={idx} className="border border-gray-200 p-4 shadow-sm rounded mb-4 animate-pulse">
+                                            <div className="h-5 bg-gray-200 rounded w-1/3 mb-3" />
+                                            <div className="h-4 bg-gray-200 rounded w-1/4 mb-2" />
+                                            <div className="h-4 bg-gray-200 rounded w-2/4" />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : data.length === 0 ? (
+                                <div className='h-full flex flex-col items-center  justify-center tracking-wide '>
+                                    <div className='mb-10'>
+                                        <PiMapPinAreaLight className="text-gray-400" size={50} />
+                                    </div>
+                                    <div className='flex items-center flex-col justify-center space-y-2 mb-6'>
+                                        <h3 className='text-lg font-normal text-gray-800'>ยังไม่มีที่อยู่</h3>
+                                        <p className='text-sm font-light text-gray-600'>คุณยังไม่ได้เพิ่มที่อยู่ใดๆ</p>
+                                    </div>
+                                    <button onClick={() => router.push('/user/address')} className='font-light bg-white text-sm cursor-pointer text-gray-700 border border-gray-300 shadow-sm hover:border-gray-500 hover:text-gray-900 px-5 py-3 disabled:opacity-50 disabled:cursor-default hover:scale-105 transition-all duaration-300'>ไปยังหน้าเพิ่มที่อยู่</button>
+                                </div>
+                            ) : data?.map((address: any) => (
                                 <div onClick={() => onSelectAddress && onSelectAddress(address)} key={address.id} className='cursor-pointer border border-gray-300 p-4 shadow-sm rounded transition-all duration-100 hover:bg-gray-100 hover:border-gray-400'>
                                     <div>
                                         <div className='text-gray-900 font-light text-md mb-3 flex items-center justify-between gap-x-4'>

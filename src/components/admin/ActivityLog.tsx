@@ -12,7 +12,7 @@ import { SlArrowLeft, SlArrowRight } from 'react-icons/sl';
 import { BsFilterRight } from 'react-icons/bs';
 import Select from 'react-select';
 import { DateTime } from 'luxon';
-import { PiTrashLight, PiUser } from 'react-icons/pi';
+import { PiNewspaperLight, PiTrashLight, PiUser } from 'react-icons/pi';
 import { CiEdit } from 'react-icons/ci';
 import DatePicker from 'react-datepicker';
 import JsonView from '@uiw/react-json-view';
@@ -93,7 +93,7 @@ export const ActivityLog: FC = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [sortMenuOpen]);
-    
+
     const handleReset = () => {
         setSearchGlobalDebounced('');
         setSelectedAction({ value: '', label: 'ทั้งหมด' });
@@ -197,7 +197,7 @@ export const ActivityLog: FC = () => {
                             )}
                         </div>
                         <div onClick={handleReset} className='w-fit border border-gray-300 p-2.5 hover:border-gray-500 shadow-sm cursor-pointer transition-all duration-300 hover:scale-110'>
-                            <RxReset  className="text-gray-600 duration-300" size={20} />
+                            <RxReset className="text-gray-600 duration-300" size={20} />
                         </div>
                     </div>
                 </div>
@@ -215,7 +215,51 @@ export const ActivityLog: FC = () => {
                         </tr>
                     </thead>
                     <tbody className='text-gray-700 [&_td]:font-light [&>tr>td]:py-2.5'>
-                        {logsList?.map((log: any) => (
+                        {logLoading ? (
+                            // 💀 โซน Skeleton Loading (จำลองแถวขึ้นมา 6 แถว)
+                            Array.from({ length: 10 }).map((_, index) => (
+                                <tr className='border-b border-gray-300' key={`skeleton-log-${index}`}>
+                                    {/* วันเวลา */}
+                                    <td className='px-2.5'>
+                                        <div className="h-5 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                                    </td>
+                                    {/* ผู้ทำ */}
+                                    <td className='pr-2.5'>
+                                        <div className="h-5 bg-gray-200 rounded animate-pulse w-2/3"></div>
+                                    </td>
+                                    {/* บทบาท */}
+                                    <td className='pr-2.5'>
+                                        <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                                    </td>
+                                    {/* สิ่งที่ทำ */}
+                                    <td className='pr-2.5'>
+                                        <div className="h-5 bg-gray-200 rounded animate-pulse w-4/5"></div>
+                                    </td>
+                                    {/* ผลลัพธ์ */}
+                                    <td className='pr-2.5'>
+                                        <div className="h-5 bg-gray-200 rounded animate-pulse w-[90%]"></div>
+                                    </td>
+                                    {/* สถานะ */}
+                                    <td>
+                                        <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : logsList.length === 0 ? (
+                            <tr>
+                                <td colSpan={7}>
+                                    <div className='mt-20 h-full w-full flex flex-col items-center justify-center tracking-wide '>
+                                        <div className='mb-10'>
+                                            <PiNewspaperLight className="text-gray-400" size={40} />
+                                        </div>
+                                        <div className='flex items-center flex-col justify-center space-y-2 mb-6'>
+                                            <h3 className='text-lg font-normal text-gray-800'>ยังไม่มีรายการสั่งซื้อ</h3>
+                                            <p className='text-sm font-light text-gray-600'>กรุณารอให้ผู้ใช้งานทำการสั่งซื้อ</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : logsList?.map((log: any) => (
                             <tr onClick={() => setOpenLogDetailModal(log)} key={log.log_id} className='border-b border-gray-300 transition-all duration-100 ease-out hover:bg-gray-100 active:bg-gray-200 cursor-pointer'>
                                 <td className='px-2.5 truncate'>{formatThaiDate(log.created_at)}</td>
                                 <td className='pr-2.5 truncate'>{log.current_full_name || 'Guest'}</td>

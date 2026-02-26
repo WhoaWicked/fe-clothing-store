@@ -16,11 +16,10 @@ export default function Login() {
 
     const handleRedirectByRole = useCallback((role: string) => {
         switch (role) {
-            case 'user': router.push("/user/product"); break;
-            case 'staff': router.push("/staff/order"); break;
-            case 'admin': router.push("/admin/activity-log"); break;
+            case 'user': router.replace("/user/product"); break;
+            case 'staff': router.replace("/staff/order"); break;
+            case 'admin': router.replace("/admin/activity-log"); break;
         }
-        router.refresh();
     }, [router]);
 
     useEffect(() => {

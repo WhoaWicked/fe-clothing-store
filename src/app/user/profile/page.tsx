@@ -103,152 +103,196 @@ export default function Page() {
                 <p className="font-light text-gray-500">ดูและแก้ไขข้อมูลส่วนตัวของคุณได้ที่นี่</p>
             </div>
 
-            <div className="space-y-6 tracking-wide mb-10">
-                {/* Avatar + ชื่อ */}
-                <div className="border border-gray-300 shadow-md">
-                    <div className="flex justify-between items-center border-b border-gray-300 p-4">
-                        <div className="flex items-center gap-x-3">
-                            <LuUser size={16} className="text-gray-500" />
-                            <h2 className="font-light text-gray-800">ข้อมูลบัญชี</h2>
+            {userLoading ? (
+                <div className="space-y-6 tracking-wide mb-10">
+                    {/* Skeleton: ข้อมูลบัญชี */}
+                    <div className="border border-gray-300 shadow-md">
+                        <div className="flex justify-between items-center border-b border-gray-300 p-4">
+                            <div className="flex items-center gap-x-3">
+                                <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+                            </div>
+                            <div className="h-8 w-24 bg-gray-200 rounded animate-pulse" />
                         </div>
-                        <button
-                            onClick={handleEditMode}
-                            className="cursor-pointer flex items-center gap-x-2 font-light text-gray-800 px-4 py-2 text-sm rounded border border-gray-300 transition-all duration-100 hover:bg-gray-100"
-                        >
-                            <SlPencil size={13} />
-                            <p>{isEditing ? 'ยกเลิก' : 'แก้ไขข้อมูล'}</p>
-                        </button>
+                        <div className="p-6 flex items-center gap-x-6 border-b border-gray-300">
+                            <div className="size-20 rounded-full bg-gray-200 animate-pulse border border-gray-300" />
+                            <div className="space-y-2 flex-1">
+                                <div className="h-5 w-40 bg-gray-200 rounded animate-pulse" />
+                                <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+                                <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+                            </div>
+                        </div>
+                        <div className="p-6 grid grid-cols-2 gap-x-8 gap-y-5">
+                            {Array.from({ length: 4 }).map((_, idx) => (
+                                <div key={idx}>
+                                    <div className="h-4 w-16 bg-gray-200 rounded mb-2 animate-pulse" />
+                                    <div className="h-5 w-full bg-gray-200 rounded animate-pulse" />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-
-                    <div className="p-6 flex items-center gap-x-6 border-b border-gray-300">
-                        <div className="size-20 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center shrink-0">
-                            <span className="text-2xl font-light text-gray-600">
-                                {userData?.first_name.charAt(0)}
-                            </span>
+                    {/* Skeleton: ข้อมูลติดต่อ */}
+                    <div className="border border-gray-300 shadow-md">
+                        <div className="flex items-center gap-x-3 border-b border-gray-300 p-4">
+                            <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
                         </div>
-                        <div className='space-y-1'>
-                            <p className="text-gray-900 font-normal text-lg">
-                                {userData?.prefix_name} {userData?.first_name} {userData?.last_name}
-                            </p>
-                            <p className="text-sm font-light text-gray-500">@{userData?.username}</p>
-                            <div className="flex items-center gap-x-2 mt-1">
-                                <GoCalendar size={13} className="text-gray-400" />
-                                <p className="text-xs font-light text-gray-400">
-                                    สมาชิกตั้งแต่ {formatThaiDate(userData?.created_at)}
+                        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+                            {Array.from({ length: 2 }).map((_, idx) => (
+                                <div key={idx}>
+                                    <div className="h-4 w-16 bg-gray-200 rounded mb-2 animate-pulse" />
+                                    <div className="h-5 w-full bg-gray-200 rounded animate-pulse" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="space-y-6 tracking-wide mb-10">
+                    {/* Avatar + ชื่อ */}
+                    <div className="border border-gray-300 shadow-md">
+                        <div className="flex justify-between items-center border-b border-gray-300 p-4">
+                            <div className="flex items-center gap-x-3">
+                                <LuUser size={16} className="text-gray-500" />
+                                <h2 className="font-light text-gray-800">ข้อมูลบัญชี</h2>
+                            </div>
+                            <button
+                                onClick={handleEditMode}
+                                className="cursor-pointer flex items-center gap-x-2 font-light text-gray-800 px-4 py-2 text-sm rounded border border-gray-300 transition-all duration-100 hover:bg-gray-100"
+                            >
+                                <SlPencil size={13} />
+                                <p>{isEditing ? 'ยกเลิก' : 'แก้ไขข้อมูล'}</p>
+                            </button>
+                        </div>
+
+                        <div className="p-6 flex items-center gap-x-6 border-b border-gray-300">
+                            <div className="size-20 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center shrink-0">
+                                <span className="text-2xl font-light text-gray-600">
+                                    {userData?.first_name.charAt(0)} {userData?.last_name.charAt(0)}
+                                </span>
+                            </div>
+                            <div className='space-y-1'>
+                                <p className="text-gray-900 font-normal text-lg">
+                                    {userData?.prefix_name} {userData?.first_name} {userData?.last_name}
                                 </p>
+                                <p className="text-sm font-light text-gray-500">@{userData?.username}</p>
+                                <div className="flex items-center gap-x-2 mt-1">
+                                    <GoCalendar size={13} className="text-gray-400" />
+                                    <p className="text-xs font-light text-gray-400">
+                                        สมาชิกตั้งแต่ {formatThaiDate(userData?.created_at)}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* ฟอร์มข้อมูล */}
+                        <div className='p-6 grid grid-cols-2 gap-x-8 gap-y-5'>
+                            <div>
+                                <label className='text-xs text-gray-500 font-light' htmlFor="">คำนำหน้า</label>
+                                {!isEditing ? (
+                                    <p className='text-sm text-gray-700 font-light'>{userData?.prefix_name || 'ยังไม่ได้ระบุ'}</p>
+                                ) : (
+                                    <Select
+                                        options={prefixOptions}
+                                        value={selectedPrefix}
+                                        onChange={setSelectedPrefix}
+                                        className='font-light text-sm mt-3'
+                                    />
+                                )}
+                            </div>
+                            <div>
+                                <label className='text-xs text-gray-500 font-light' htmlFor="">ชื่อผู้ใช้งาน</label>
+                                {!isEditing ? (
+                                    <p className='text-sm text-gray-700 font-light'>{userData?.username}</p>
+                                ) : (
+                                    <input
+                                        value={username}
+                                        type="text"
+                                        className='w-full border border-gray-300 hover:border-gray-500 text-sm px-4 py-1.5 mt-3 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none'
+                                        onChange={e => setUsername(e.target.value)}
+                                    />
+                                )}
+                            </div>
+                            <div>
+                                <label className='text-xs text-gray-500 font-light' htmlFor="">ชื่อจริง</label>
+                                {!isEditing ? (
+                                    <p className='text-sm text-gray-700 font-light'>{userData?.first_name}</p>
+                                ) : (
+                                    <input
+                                        value={firstName}
+                                        type="text"
+                                        className='w-full border border-gray-300 hover:border-gray-500 text-sm px-4 py-1.5 mt-3 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none'
+                                        onChange={e => setFirstName(e.target.value)}
+                                    />
+                                )}
+                            </div>
+                            <div>
+                                <label className='text-xs text-gray-500 font-light' htmlFor="">นามสกุล</label>
+                                {!isEditing ? (
+                                    <p className='text-sm text-gray-700 font-light'>{userData?.last_name}</p>
+                                ) : (
+                                    <input
+                                        value={lastName}
+                                        type="text"
+                                        className='w-full border border-gray-300 hover:border-gray-500 text-sm px-4 py-1.5 mt-3 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none'
+                                        onChange={e => setLastName(e.target.value)}
+                                    />
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    {/* ฟอร์มข้อมูล */}
-                    <div className='p-6 grid grid-cols-2 gap-x-8 gap-y-5'>
-                        <div>
-                            <label className='text-xs text-gray-500 font-light' htmlFor="">คำนำหน้า</label>
-                            {!isEditing ? (
-                                <p className='text-sm text-gray-700 font-light'>{userData?.prefix_name}</p>
-                            ) : (
-                                <Select
-                                    options={prefixOptions}
-                                    value={selectedPrefix}
-                                    onChange={setSelectedPrefix}
-                                    className='font-light text-sm mt-3'
-                                />
-                            )}
+                    {/* ข้อมูลติดต่อ */}
+                    <div className="border border-gray-300 shadow-md">
+                        <div className="flex items-center gap-x-3 border-b border-gray-300 p-4">
+                            <MdOutlineEmail size={16} className="text-gray-500" />
+                            <h2 className="font-light text-gray-800">ข้อมูลติดต่อ</h2>
                         </div>
-                        <div>
-                            <label className='text-xs text-gray-500 font-light' htmlFor="">ชื่อผู้ใช้งาน</label>
-                            {!isEditing ? (
-                                <p className='text-sm text-gray-700 font-light'>{userData?.username}</p>
-                            ) : (
-                                <input
-                                    value={username}
-                                    type="text"
-                                    className='w-full border border-gray-300 hover:border-gray-500 text-sm px-4 py-1.5 mt-3 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none'
-                                    onChange={e => setUsername(e.target.value)}
-                                />
-                            )}
-                        </div>
-                        <div>
-                            <label className='text-xs text-gray-500 font-light' htmlFor="">ชื่อจริง</label>
-                            {!isEditing ? (
-                                <p className='text-sm text-gray-700 font-light'>{userData?.first_name}</p>
-                            ) : (
-                                <input
-                                    value={firstName}
-                                    type="text"
-                                    className='w-full border border-gray-300 hover:border-gray-500 text-sm px-4 py-1.5 mt-3 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none'
-                                    onChange={e => setFirstName(e.target.value)}
-                                />
-                            )}
-                        </div>
-                        <div>
-                            <label className='text-xs text-gray-500 font-light' htmlFor="">นามสกุล</label>
-                            {!isEditing ? (
-                                <p className='text-sm text-gray-700 font-light'>{userData?.last_name}</p>
-                            ) : (
-                                <input
-                                    value={lastName}
-                                    type="text"
-                                    className='w-full border border-gray-300 hover:border-gray-500 text-sm px-4 py-1.5 mt-3 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none'
-                                    onChange={e => setLastName(e.target.value)}
-                                />
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* ข้อมูลติดต่อ */}
-                <div className="border border-gray-300 shadow-md">
-                    <div className="flex items-center gap-x-3 border-b border-gray-300 p-4">
-                        <MdOutlineEmail size={16} className="text-gray-500" />
-                        <h2 className="font-light text-gray-800">ข้อมูลติดต่อ</h2>
-                    </div>
-                    <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
-                        <div>
-                            <label className="block text-xs text-gray-500 font-light mb-1.5">
-                                อีเมล
-                            </label>
-                            <div className="flex items-center gap-x-2 border border-gray-200 px-3 py-2 rounded bg-gray-100">
-                                <MdOutlineEmail size={14} className="text-gray-400" />
-                                <p className="text-sm font-light text-gray-700">{userData?.email}</p>
+                        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+                            <div>
+                                <label className="block text-xs text-gray-500 font-light mb-1.5">
+                                    อีเมล
+                                </label>
+                                <div className="flex items-center gap-x-2 border border-gray-200 px-3 py-2 rounded bg-gray-100">
+                                    <MdOutlineEmail size={14} className="text-gray-400" />
+                                    <p className="text-sm font-light text-gray-700">{userData?.email}</p>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <label className="block text-xs text-gray-500 font-light mb-1.5">
-                                เบอร์โทรศัพท์
-                            </label>
-                            {!isEditing ? (
-                                <div className="flex items-center gap-x-2 py-2 rounded">
-                                    <MdOutlinePhone size={14} className="text-gray-400" />
-                                    <p className="text-sm font-light text-gray-700">{userData?.phone}</p>
-                                </div>
-                            ) : (
-                                <div className="group flex items-center gap-x-2 border border-gray-300 hover:border-gray-500 px-3 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm">
-                                    <MdOutlinePhone size={14} className="text-gray-400 group-focus-within:text-gray-800 duration-300" />
-                                    <input value={phone} onChange={e => setPhone(e.target.value)} type="text" className='w-full hover:border-gray-500 text-sm duration-300  font-light text-gray-600 focus:outline-none' />
-                                </div>
-                            )}
+                            <div>
+                                <label className="block text-xs text-gray-500 font-light mb-1.5">
+                                    เบอร์โทรศัพท์
+                                </label>
+                                {!isEditing ? (
+                                    <div className="flex items-center gap-x-2 py-2 rounded">
+                                        <MdOutlinePhone size={14} className="text-gray-400" />
+                                        <p className="text-sm font-light text-gray-700">{userData?.phone || 'ยังไม่ได้ระบุ'}</p>
+                                    </div>
+                                ) : (
+                                    <div className="group flex items-center gap-x-2 border border-gray-300 hover:border-gray-500 px-3 py-2 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm">
+                                        <MdOutlinePhone size={14} className="text-gray-400 group-focus-within:text-gray-800 duration-300" />
+                                        <input value={phone ?? ''} onChange={e => setPhone(e.target.value)} type="text" className='w-full hover:border-gray-500 text-sm duration-300  font-light text-gray-600 focus:outline-none' />
+                                    </div>
+                                )}
+                            </div>
+
                         </div>
 
                     </div>
-
+                    {isEditing && (
+                        <div className="flex justify-end gap-x-4">
+                            <button
+                                onClick={() => setIsEditing(false)}
+                                className="text-sm cursor-pointer rounded px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100"
+                            >
+                                ย้อนกลับ
+                            </button>
+                            <button
+                                onClick={handleSubmit}
+                                className="text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80">
+                                บันทึก
+                            </button>
+                        </div>
+                    )}
                 </div>
-                {isEditing && (
-                    <div className="flex justify-end gap-x-4">
-                        <button
-                            onClick={() => setIsEditing(false)}
-                            className="text-sm cursor-pointer rounded px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100"
-                        >
-                            ย้อนกลับ
-                        </button>
-                        <button
-                            onClick={handleSubmit}
-                            className="text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80">
-                            บันทึก
-                        </button>
-                    </div>
-                )}
-            </div>
+            )}
         </div>
     );
 }

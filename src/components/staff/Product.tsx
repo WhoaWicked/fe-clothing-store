@@ -9,7 +9,7 @@ import { GoCalendar, GoPlus, GoSearch } from 'react-icons/go';
 import { FaLayerGroup } from 'react-icons/fa';
 import { IoIosInformationCircleOutline } from 'react-icons/io';
 import { CiEdit } from 'react-icons/ci';
-import { PiImagesSquareLight, PiTrashLight, PiUser } from 'react-icons/pi';
+import { PiImagesSquareLight, PiNewspaperLight, PiTrashLight, PiUser } from 'react-icons/pi';
 import { RxCross2, RxReset } from 'react-icons/rx';
 import { useSearchParams } from 'next/navigation';
 import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
@@ -127,7 +127,54 @@ export const ProductList: FC = () => {
                         </tr>
                     </thead>
                     <tbody className='text-gray-700 [&_td]:font-light [&>tr>td]:py-2.5'>
-                        {productList?.map((product: any) => (
+                        {isProductLoading ? (
+                            // 💀 โซน Skeleton Loading (จำลองแถวขึ้นมา 5 แถว)
+                            Array.from({ length: 10 }).map((_, index) => (
+                                <tr className='border-b border-gray-300' key={`skeleton-product-${index}`}>
+                                    <td className='pl-2.5'>
+                                        <div className='flex items-center gap-x-4'>
+                                            {/* กรอบรูปสินค้าจำลอง */}
+                                            <div className='size-15 bg-gray-200 rounded animate-pulse shrink-0'></div>
+                                            {/* ชื่อและรหัสสินค้าจำลอง */}
+                                            <div className='flex flex-col space-y-2 w-full'>
+                                                <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                                                <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div></td>
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div></td>
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div></td>
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div></td>
+                                    <td>
+                                        {/* สวิตช์เปิด/ปิด จำลอง */}
+                                        <div className='flex justify-center items-center'>
+                                            <div className="h-6 w-11 bg-gray-200 rounded-full animate-pulse"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {/* ปุ่ม Info จำลอง */}
+                                        <div className="flex items-center justify-center gap-x-4">
+                                            <div className="size-9 bg-gray-200 rounded-full animate-pulse"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : productList.length === 0 ? (
+                            <tr>
+                                <td colSpan={7}>
+                                    <div className='mt-20 h-full w-full flex flex-col items-center justify-center tracking-wide '>
+                                        <div className='mb-10'>
+                                            <FaLayerGroup size={40} className=' text-gray-300 ' />
+                                        </div>
+                                        <div className='flex items-center flex-col justify-center space-y-2 mb-6'>
+                                            <h3 className='text-lg font-normal text-gray-800'>ยังไม่มีรายการสินค้า</h3>
+                                            <p className='text-sm font-light text-gray-600'>กรุณาทำการเพิ่มรายการสินค้า</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : productList?.map((product: any) => (
                             <tr key={product.product_id} className='border-b border-gray-300'>
                                 <td className=''>
                                     <div className='flex items-center gap-x-4'>

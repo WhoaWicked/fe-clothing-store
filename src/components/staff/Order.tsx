@@ -14,6 +14,7 @@ import { IoDice, IoDiceSharp } from 'react-icons/io5';
 import { AiFillInfoCircle } from 'react-icons/ai';
 import DatePicker from 'react-datepicker';
 import { BsFilterRight } from 'react-icons/bs';
+import { PiNewspaperLight } from 'react-icons/pi';
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
@@ -54,7 +55,7 @@ export const OrderList: FC<{ statusName: string }> = ({ statusName }) => {
         sort_type: sortType
     });
 
-    const { data: orders, error: orderError, mutate } = useSWR(`/api/staff/order?${params.toString()}`, fetcher,
+    const { data: orders, error: orderError, mutate, isLoading: isLoadingOrders } = useSWR(`/api/staff/order?${params.toString()}`, fetcher,
         { onError: (err) => console.error('Error fetching orders:', err) });
 
     const ordersList = orders?.orders || [];
@@ -202,7 +203,42 @@ export const OrderList: FC<{ statusName: string }> = ({ statusName }) => {
                         </tr>
                     </thead>
                     <tbody className='text-gray-700 [&_td]:font-light [&>tr>td]:py-2.5'>
-                        {ordersList.map((order: any) => (
+                        {isLoadingOrders ? (
+                            // 💀 โซน Skeleton Loading (จำลองแถวขึ้นมา 5 แถว)
+                            Array.from({ length: 10 }).map((_, index) => (
+                                <tr className='border-b border-gray-300' key={`skeleton-${index}`}>
+                                    <td className='px-2.5'><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div></td>
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-5/6"></div></td>
+                                    <td className='pr-2.5'><div className="h-4 bg-gray-200 rounded animate-pulse w-full"></div></td>
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div></td>
+                                    <td>
+                                        {/* ทำ Skeleton ให้คล้าย Badge สถานะ */}
+                                        <div className="h-6 bg-gray-200 rounded-full animate-pulse w-16"></div>
+                                    </td>
+                                    <td><div className="h-4 bg-gray-200 rounded animate-pulse w-1/2"></div></td>
+                                    <td>
+                                        {/* ทำ Skeleton ให้คล้ายปุ่มวงกลม Action */}
+                                        <div className="flex items-center justify-center gap-x-4">
+                                            <div className="size-9 bg-gray-200 rounded-full animate-pulse"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : ordersList.length === 0 ? (
+                            <tr>
+                                <td colSpan={7}>
+                                    <div className='mt-20 h-full w-full flex flex-col items-center justify-center tracking-wide '>
+                                        <div className='mb-10'>
+                                            <PiNewspaperLight className="text-gray-400" size={40} />
+                                        </div>
+                                        <div className='flex items-center flex-col justify-center space-y-2 mb-6'>
+                                            <h3 className='text-lg font-normal text-gray-800'>ยังไม่มีรายการสั่งซื้อ</h3>
+                                            <p className='text-sm font-light text-gray-600'>กรุณารอให้ผู้ใช้งานทำการสั่งซื้อ</p>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : ordersList.map((order: any) => (
                             <tr className='border-b border-gray-300' key={order.order_id}>
                                 <td title={order.order_code} className='px-2.5 truncate'>{order.order_code}</td>
                                 <td>{formatThaiDate(order.created_at)}</td>

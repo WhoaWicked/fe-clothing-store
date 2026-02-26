@@ -178,7 +178,33 @@ export function MyCart() {
                 </div>
                 <div className='grid grid-cols-[3fr_1fr] gap-x-8'>
                     <div className=''>
-                        {cartData?.items.length === 0 ? (
+                        {cartIsLoading ? (
+                            <div className='h-full'>
+                                {Array.from({ length: 2 }).map((_, idx) => (
+                                    <div key={idx} className="flex items-center gap-x-5 border-b border-gray-200 pb-5 mb-5 animate-pulse">
+                                        {/* Image Skeleton */}
+                                        <div className="size-35 aspect-square bg-gray-200 rounded" />
+                                        {/* Content Skeleton */}
+                                        <div className="flex flex-col flex-1 gap-y-2">
+                                            <div className="h-5 bg-gray-200 rounded w-2/4" />
+                                            <div className="h-4 bg-gray-200 rounded w-3/4" />
+                                            <div className="h-5 bg-gray-200 rounded w-1/4" />
+                                            <div className="h-8 bg-gray-100 rounded w-16" />
+                                        </div>
+                                        {/* Quantity Skeleton */}
+                                        <div className="flex items-center gap-x-2">
+                                            <div className="size-8 bg-gray-200 rounded" />
+                                            <div className="h-8 w-18 bg-gray-200 rounded" />
+                                            <div className="size-8 bg-gray-200 rounded" />
+                                        </div>
+                                        {/* Delete Skeleton */}
+                                        <div>
+                                            <div className="size-8 bg-gray-200 rounded" />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : cartData?.items.length === 0 ? (
                             <div className='h-full flex flex-col items-center  justify-center tracking-wide '>
                                 <div className='mb-10'>
                                     <HiOutlineShoppingBag className="text-gray-400" size={40} />
