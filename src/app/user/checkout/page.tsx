@@ -3,7 +3,11 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { Checkout } from '@/components/user/Checkout';
+import dynamic from 'next/dynamic';
+const Checkout = dynamic(
+    () => import('@/components/user/Checkout').then(mod => mod.Checkout),
+    { ssr: false }
+);
 
 
 export default function page() {
