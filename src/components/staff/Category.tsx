@@ -168,6 +168,13 @@ export const CategoryList: FC = () => {
             console.error('Delete Category error:', error);
         }
     }
+    const handleReset = () => {
+        setSearchCategoryName('');
+        setSearchCategoryCode('');
+        setCategoryName('');
+        setCategoryCode('');
+        setCurrentPage(1);
+    }
     return (
         <div id="staff-category-list-component">
             <div>
@@ -176,15 +183,15 @@ export const CategoryList: FC = () => {
                     <div className='flex items-center gap-x-5'>
                         <div className="w-70 group flex items-center gap-x-4 border border-gray-300 hover:border-gray-500  px-4 py-2.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm">
                             <GoSearch className="text-gray-400 group-focus-within:text-gray-800 duration-300" size={20} />
-                            <input type="text" onChange={(e) => setSearchCategoryName(e.target.value)} className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยชื่อหมวดหมู่" />
+                            <input value={searchCategoryName} type="text" onChange={(e) => setSearchCategoryName(e.target.value)} className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยชื่อหมวดหมู่" />
                         </div>
                         <div className="w-70 group flex items-center gap-x-4 border border-gray-300 hover:border-gray-500  px-4 py-2.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm">
                             <GoSearch className="text-gray-400 group-focus-within:text-gray700 duration-300" size={20} />
-                            <input type="text" onChange={(e) => setSearchCategoryCode(e.target.value)} className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยรหัสหมวดหมู่" />
+                            <input value={searchCategoryCode} type="text" onChange={(e) => setSearchCategoryCode(e.target.value)} className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยรหัสหมวดหมู่" />
                         </div>
                     </div>
                     <div className='flex items-center gap-x-5 mb-6'>
-                        <div className='w-fit border border-gray-300 p-2.5 hover:border-gray-500 shadow-sm cursor-pointer transition-all duration-300 hover:scale-110'>
+                        <div onClick={handleReset} className='w-fit border border-gray-300 p-2.5 hover:border-gray-500 shadow-sm cursor-pointer transition-all duration-300 hover:scale-110'>
                             <RxReset className="text-gray-600 duration-300" size={20} />
                         </div>
                         <button onClick={() => setIsOpenAddCategoryModal(true)} className='flex items-center gap-x-2 font-light bg-white text-sm cursor-pointer text-gray-700 border border-gray-300 shadow-sm hover:border-gray-500 hover:text-gray-900 px-4 py-2.5 hover:scale-105 transition-all duaration-300'>

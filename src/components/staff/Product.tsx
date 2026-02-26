@@ -86,6 +86,14 @@ export const ProductList: FC = () => {
         }
     }
 
+    const handleReset = () => {
+        setSearchProductName('');
+        setSearchProductCode('');
+        setProductName('');
+        setProductCode('');
+        setCurrentPage(1);
+    }
+
     return (
         <div id="staff-product-list-components" className='tracking-wide'>
             <div>
@@ -94,15 +102,15 @@ export const ProductList: FC = () => {
                     <div className='flex items-center gap-x-5'>
                         <div className="w-70 group flex items-center gap-x-4 border border-gray-300 hover:border-gray-500  px-4 py-2.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm">
                             <GoSearch className="text-gray-400 group-focus-within:text-gray-800 duration-300" size={20} />
-                            <input onChange={(e) => setSearchProductName(e.target.value)} type="text" className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยชื่อสินค้า" />
+                            <input value={searchProductName} onChange={(e) => setSearchProductName(e.target.value)} type="text" className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยชื่อสินค้า" />
                         </div>
                         <div className="w-70 group flex items-center gap-x-4 border border-gray-300 hover:border-gray-500  px-4 py-2.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm">
                             <GoSearch className="text-gray-400 group-focus-within:text-gray700 duration-300" size={20} />
-                            <input onChange={(e) => setSearchProductCode(e.target.value)} type="text" className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยรหัสสินค้า" />
+                            <input value={searchProductCode} onChange={(e) => setSearchProductCode(e.target.value)} type="text" className="font-light text-sm w-full tracking-wide text-gray-600 focus:outline-none" placeholder="ค้นหาด้วยรหัสสินค้า" />
                         </div>
                     </div>
                     <div className='flex items-center gap-x-5 mb-6'>
-                        <div className='w-fit border border-gray-300 p-2.5 hover:border-gray-500 shadow-sm cursor-pointer transition-all duration-300 hover:scale-110'>
+                        <div onClick={handleReset} className='w-fit border border-gray-300 p-2.5 hover:border-gray-500 shadow-sm cursor-pointer transition-all duration-300 hover:scale-110'>
                             <RxReset className="text-gray-600 duration-300" size={20} />
                         </div>
                         <button onClick={() => setOpenAddProductModal(true)} className='flex items-center gap-x-2 font-light bg-white text-sm cursor-pointer text-gray-700 border border-gray-300 shadow-sm hover:border-gray-500 hover:text-gray-900 px-4 py-2.5 hover:scale-105 transition-all duaration-300'>
@@ -828,7 +836,7 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
                                     {isEditMode && (
                                         <div className='flex items-center gap-x-4 mb-3'>
                                             {presetSizes.map((size, index) => (
-                                                <button type='button' key={size} onClick={() => toggleVariantSize(size)} className={`${product?.variants.some((v: any) => v.size === size) ? 'bg-gray-200' : 'bg-gray-50 cursor-pointer  transition-all duration-100 hover:bg-gray-200 active:scale-110'}  size-10  text-sm border-2 font-light border-gray-300 text-gray-600`}>
+                                                <button type='button' key={size} onClick={() => toggleVariantSize(size)} disabled={product?.variants.some((v: any) => v.size === size)} className={`${product?.variants.some((v: any) => v.size === size) ? 'bg-gray-200' : 'bg-gray-50 cursor-pointer  transition-all duration-100 hover:bg-gray-200 active:scale-110'}  size-10  text-sm border-2 font-light border-gray-300 text-gray-600`}>
                                                     {size}
                                                 </button>
                                             ))}
@@ -844,37 +852,59 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
                                         </thead>
                                         <tbody className='text-gray-700 [&_td]:text-sm [&_td]:font-light [&>tr>td]:py-2.5'>
                                             {!isEditMode ? (
-                                                product?.variants?.map((variant: any) => (
-                                                    <tr key={variant.id} className='border-b border-gray-300'>
-                                                        <td className='pl-2.5'>{variant.sku_code}</td>
-                                                        <td className=''>
-                                                            <p className='size-8 flex justify-center items-center border text-xs border-gray-300 bg-gray-50'>
-                                                                {variant.size}
-                                                            </p>
+                                                product?.variants?.length === 0 ? (
+                                                    <tr>
+                                                        <td colSpan={3}>
+                                                            <div className='flex items-center justify-center'>
+                                                                <p className='text-xs text-gray-500 text-center py-4'>ไม่มีตัวเลือกสินค้า</p>
+                                                            </div>
                                                         </td>
-                                                        <td className={`text-end pr-2.5 ${Number(variant.stock_quantity) <= 10 && 'text-red-600'}`}>{Number(variant.stock_quantity)}</td>
                                                     </tr>
-                                                ))
+                                                ) :
+                                                    (
+                                                        product?.variants?.map((variant: any) => (
+                                                            <tr key={variant.id} className='border-b border-gray-300'>
+                                                                <td className='pl-2.5'>{variant.sku_code}</td>
+                                                                <td className=''>
+                                                                    <p className='size-8 flex justify-center items-center border text-xs border-gray-300 bg-gray-50'>
+                                                                        {variant.size}
+                                                                    </p>
+                                                                </td>
+                                                                <td className={`text-end pr-2.5 ${Number(variant.stock_quantity) <= 10 && 'text-red-600'}`}>{Number(variant.stock_quantity)}</td>
+                                                            </tr>
+                                                        ))
+                                                    )
                                             ) : (
-                                                editVariants?.map((variant: any, index: number) => (
-                                                    <tr key={variant.id} className='border-b border-gray-300'>
-                                                        <td className='pl-2.5'>{variant.sku_code || 'Auto - Code'}</td>
-                                                        <td className=''>
-                                                            <p className='size-8 flex justify-center items-center border text-xs border-gray-300 bg-gray-50'>
-                                                                {variant.size}
-                                                            </p>
-                                                        </td>
-                                                        <td className='text-end pr-2.5'>
-                                                            <input value={variant.stock_quantity}
-                                                                onChange={(e) => {
-                                                                    const newVariants = [...editVariants];
-                                                                    newVariants[index].stock_quantity = Number(e.target.value);
-                                                                    setEditVariants(newVariants);
-                                                                }}
-                                                                className='w-20 border border-gray-300 hover:border-gray-500 text-sm px-4 py-1.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none' type="number" />
+                                                editVariants?.length === 0 ? (
+                                                    <tr>
+                                                        <td colSpan={3} className=''>
+                                                            <div className='flex items-center justify-center'>
+                                                                <p className='text-xs text-gray-500 text-center py-4'>ไม่มีตัวเลือกสินค้า</p>
+                                                            </div>
                                                         </td>
                                                     </tr>
-                                                ))
+                                                ) :
+                                                    (
+                                                        editVariants?.map((variant: any, index: number) => (
+                                                            <tr key={variant.id} className='border-b border-gray-300'>
+                                                                <td className='pl-2.5'>{variant.sku_code || 'Auto - Code'}</td>
+                                                                <td className=''>
+                                                                    <p className='size-8 flex justify-center items-center border text-xs border-gray-300 bg-gray-50'>
+                                                                        {variant.size}
+                                                                    </p>
+                                                                </td>
+                                                                <td className='text-end pr-2.5'>
+                                                                    <input value={variant.stock_quantity}
+                                                                        onChange={(e) => {
+                                                                            const newVariants = [...editVariants];
+                                                                            newVariants[index].stock_quantity = Number(e.target.value);
+                                                                            setEditVariants(newVariants);
+                                                                        }}
+                                                                        className='w-20 border border-gray-300 hover:border-gray-500 text-sm px-4 py-1.5 duration-300 focus-within:ring-1 focus-within:ring-gray-500 shadow-sm font-light text-gray-600 focus:outline-none' type="number" />
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    )
                                             )}
                                         </tbody>
                                     </table>
