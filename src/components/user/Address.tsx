@@ -10,6 +10,7 @@ import { AddressSkeleton } from './AddressSkeleton';
 import { GoHome } from 'react-icons/go';
 import { SiHomeadvisor } from 'react-icons/si';
 import { ThailandAddressTypeahead, ThailandAddressValue, } from "react-thailand-address-typeahead";
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
@@ -40,6 +41,7 @@ export const AddressList: FC = () => {
             [name]: value
         });
     }
+    const [loading, setLoading] = useState(false);
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -66,6 +68,7 @@ export const AddressList: FC = () => {
                 zip_code: thaiAddress.postalCode,
                 phone: address.phone
             }
+            setLoading(true);
             await axios.post('/api/user/address', addressData);
             Swal.fire({
                 title: 'สร้างที่อยู่ใหม่สำเร็จ',
@@ -98,6 +101,8 @@ export const AddressList: FC = () => {
                 return;
             }
             console.error('Error creating address:', error);
+        } finally {
+            setLoading(false);
         }
     }
     const handleDelete = async (addressId: string) => {
@@ -235,7 +240,18 @@ export const AddressList: FC = () => {
                                 className=''>
                                 <button
                                     type='submit'
-                                    className={` bg-black w-full cursor-pointer  text-white font-light text-md py-2.5 transition-all duration-100 `}>บันทึกที่อยู่ใหม่</button>
+                                    disabled={loading}
+                                    className='bg-black w-full cursor-pointer text-white font-light text-md py-2.5 transition-all duration-100 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-x-2'
+                                >
+                                    {loading ? (
+                                        <>
+                                            <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                            <span>กำลังบันทึก</span>
+                                        </>
+                                    ) : (
+                                        <span>บันทึกที่อยู่ใหม่</span>
+                                    )}
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -282,6 +298,7 @@ export const EditAddressPopup: FC<EditAddressPopupProps> = ({ addressData, onClo
             [name]: value
         });
     }
+    const [loading, setLoading] = useState(false);
     const handleEdit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -309,6 +326,7 @@ export const EditAddressPopup: FC<EditAddressPopupProps> = ({ addressData, onClo
                 zip_code: thaiAddress.postalCode,
                 phone: address.phone
             }
+            setLoading(true);
             await axios.put(`/api/user/address/${addressId}`, addressForAPI);
             Swal.fire({
                 title: 'แก้ไขที่อยู่สำเร็จ',
@@ -331,6 +349,8 @@ export const EditAddressPopup: FC<EditAddressPopupProps> = ({ addressData, onClo
                 return;
             }
             console.error('Error editing address:', error);
+        } finally {
+            setLoading(false);
         }
     }
     return (
@@ -435,7 +455,18 @@ export const EditAddressPopup: FC<EditAddressPopupProps> = ({ addressData, onClo
                                     <button onClick={onClose} type='button' className='text-sm  cursor-pointer rounded px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100'>ยกเลิก</button>
                                     <button
                                         type='submit'
-                                        className={` bg-black cursor-pointer  text-white font-light text-sm py-2 px-5 rounded transition-all duration-100 `}>บันทึก</button>
+                                        disabled={loading}
+                                        className='text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-x-2'
+                                    >
+                                        {loading ? (
+                                            <>
+                                                <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                                <span>กำลังบันทึก</span>
+                                            </>
+                                        ) : (
+                                            <span>บันทึก</span>
+                                        )}
+                                    </button>
                                 </div>
                             </form>
                         </div>

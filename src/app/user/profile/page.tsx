@@ -9,6 +9,7 @@ import useSWR from 'swr';
 import axios from 'axios';
 import Select from 'react-select';
 import Swal from 'sweetalert2';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const formatThaiDate = (dateString: string) => {
     if (!dateString) return '';
@@ -49,7 +50,7 @@ export default function Page() {
         }
         setIsEditing(!isEditing);
     }
-
+    const [loading, setLoading] = useState(false);
     const handleSubmit = async () => {
         try {
             if (username && firstName && lastName && phone && selectedPrefix) {
@@ -64,6 +65,7 @@ export default function Page() {
                 });
                 if (!confirmResult.isConfirmed) return;
             }
+            setLoading(true);
             const response = await axios.put('/api/user/profile', {
                 username,
                 first_name: firstName,
@@ -90,6 +92,8 @@ export default function Page() {
                 });
                 return;
             }
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -284,10 +288,24 @@ export default function Page() {
                             >
                                 ย้อนกลับ
                             </button>
-                            <button
+                            {/* <button
                                 onClick={handleSubmit}
                                 className="text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80">
                                 บันทึก
+                            </button> */}
+                            <button
+                                onClick={handleSubmit}
+                                disabled={loading}
+                                className='text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-x-2'
+                            >
+                                {loading ? (
+                                    <>
+                                        <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                        <span>กำลังบันทึก</span>
+                                    </>
+                                ) : (
+                                    <span>บันทึก</span>
+                                )}
                             </button>
                         </div>
                     )}

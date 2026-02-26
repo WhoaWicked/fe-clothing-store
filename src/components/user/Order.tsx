@@ -13,6 +13,7 @@ import { PiNewspaperLight } from "react-icons/pi";
 import Swal from 'sweetalert2';
 import { RxCross2 } from 'react-icons/rx';
 import { OrderListSkeleton } from './OrderSkeleton';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
@@ -276,6 +277,7 @@ export const CancelOrderPopup: FC<CancelOrderPopupProps> = ({ mutate, order, onC
         { label: 'อื่นๆ' },
     ];
     const [selectedReason, setSelectedReason] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
     const handleCancelOrder = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
@@ -292,6 +294,7 @@ export const CancelOrderPopup: FC<CancelOrderPopupProps> = ({ mutate, order, onC
                 });
                 if (!result.isConfirmed) return;
             }
+            setLoading(true);
             const response = await axios.put(`/api/user/order/${order.id}`, {
                 cancelledReason: selectedReason
             });
@@ -316,6 +319,8 @@ export const CancelOrderPopup: FC<CancelOrderPopupProps> = ({ mutate, order, onC
                 });
             }
             console.error("Error cancelling order:", error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -358,7 +363,20 @@ export const CancelOrderPopup: FC<CancelOrderPopupProps> = ({ mutate, order, onC
                             </div>
                             <div className='flex justify-end gap-x-4'>
                                 <button onClick={onClose} type='button' className='text-sm  cursor-pointer rounded px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100'>ย้อนกลับ</button>
-                                <button type='submit' className='text-sm  cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 '>ยืนยัน</button>
+                                <button
+                                    type='submit'
+                                    disabled={loading}
+                                    className='text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-x-2'
+                                >
+                                    {loading ? (
+                                        <>
+                                            <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                            <span>กำลังยกเลิก</span>
+                                        </>
+                                    ) : (
+                                        <span>ยืนยัน</span>
+                                    )}
+                                </button>
                             </div>
                         </form>
                     </div>

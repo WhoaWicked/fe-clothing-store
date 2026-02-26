@@ -11,7 +11,7 @@ import { SlArrowLeft, SlArrowRight } from 'react-icons/sl';
 import Image from 'next/image';
 import { FaLayerGroup } from 'react-icons/fa';
 import { IoDice, IoDiceSharp } from 'react-icons/io5';
-import { AiFillInfoCircle } from 'react-icons/ai';
+import { AiFillInfoCircle, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import DatePicker from 'react-datepicker';
 import { BsFilterRight } from 'react-icons/bs';
 import { PiNewspaperLight } from 'react-icons/pi';
@@ -342,7 +342,7 @@ export const OrderDetailModal: FC<OrderDetailModalProps> = ({ order, onClose, mu
     }
     const [cancelOrderModal, setCancelOrderModal] = useState(null);
     const [trackingNumberModal, setTrackingNumberModal] = useState(null);
-
+    const [loading, setLoading] = useState(false);
     const handleDelivered = async (orderId: number) => {
         try {
             if (orderId) {
@@ -358,6 +358,7 @@ export const OrderDetailModal: FC<OrderDetailModalProps> = ({ order, onClose, mu
                 });
                 if (!confirmResult.isConfirmed) return;
             }
+            setLoading(true);
             const response = await axios.patch(`/api/staff/order/delivered/${orderId}`);
             Swal.fire({
                 icon: 'success',
@@ -377,6 +378,8 @@ export const OrderDetailModal: FC<OrderDetailModalProps> = ({ order, onClose, mu
                 });
                 return;
             }
+        } finally {
+            setLoading(false);
         }
     }
     const statusActionButton: any = {
@@ -395,7 +398,21 @@ export const OrderDetailModal: FC<OrderDetailModalProps> = ({ order, onClose, mu
         'shipped': (
             <div className='flex items-center justify-end gap-x-4'>
                 <button onClick={onClose} type='button' className='text-sm  cursor-pointer rounded shadow px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100'>ปิด</button>
-                <button onClick={() => handleDelivered(order.order_id)} type='button' className='text-sm  cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 '>ลูกค้ารับของแล้ว</button>
+                <button
+                    onClick={() => handleDelivered(order.order_id)}
+                    type='button'
+                    disabled={loading}
+                    className='text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-x-2'
+                >
+                    {loading ? (
+                        <>
+                            <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                            <span>กำลังดำเนินการ</span>
+                        </>
+                    ) : (
+                        <span>ลูกค้ารับของแล้ว</span>
+                    )}
+                </button>
             </div>
         ),
         'default': (
@@ -569,6 +586,7 @@ export const CancelledOrderModal: FC<CancelledOrderModalProps> = ({ orderId, onC
         { label: 'อื่นๆ' }
     ];
     const [selectedReason, setSelectedReason] = useState('');
+    const [loading, setLoading] = useState(false);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -585,6 +603,7 @@ export const CancelledOrderModal: FC<CancelledOrderModalProps> = ({ orderId, onC
                 });
                 if (!confirmResult.isConfirmed) return;
             }
+            setLoading(true);
             const response = await axios.patch(`/api/staff/order/cancelled/${orderId}`, {
                 cancelledReason: selectedReason
             });
@@ -608,6 +627,8 @@ export const CancelledOrderModal: FC<CancelledOrderModalProps> = ({ orderId, onC
                 return;
             }
             console.error('Error cancelling order:', error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -646,8 +667,20 @@ export const CancelledOrderModal: FC<CancelledOrderModalProps> = ({ orderId, onC
                             </div>
                             <div className='flex justify-end gap-x-4'>
                                 <button onClick={onClose} type='button' className='text-sm  cursor-pointer rounded px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100'>ยกเลิก</button>
-                                <button type='submit' className='text-sm  cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 '>ยืนยัน</button>
-                            </div>
+                                <button
+                                    type='submit'
+                                    disabled={loading}
+                                    className='text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-x-2'
+                                >
+                                    {loading ? (
+                                        <>
+                                            <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                            <span>กำลังดำเนินการ</span>
+                                        </>
+                                    ) : (
+                                        <span>ยืนยัน</span>
+                                    )}
+                                </button>                            </div>
                         </form>
                     </div>
                 </div>
@@ -675,6 +708,7 @@ export const TrackingNumberModal: FC<TrackingNumberModalProps> = ({ orderId, onC
         setTrackingNumber(`DEV-${generatedCode}`);
     }
 
+    const [loading, setLoading] = useState(false);
     const handleShipped = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -691,6 +725,7 @@ export const TrackingNumberModal: FC<TrackingNumberModalProps> = ({ orderId, onC
                 });
                 if (!confirmResult.isConfirmed) return;
             }
+            setLoading(true);
             const response = await axios.patch(`/api/staff/order/shipped/${orderId}`,
                 { tracking_number: trackingNumber }
             );
@@ -713,6 +748,8 @@ export const TrackingNumberModal: FC<TrackingNumberModalProps> = ({ orderId, onC
                 });
                 return;
             }
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -745,7 +782,20 @@ export const TrackingNumberModal: FC<TrackingNumberModalProps> = ({ orderId, onC
                             </div>
                             <div className='flex justify-end gap-x-4'>
                                 <button onClick={onClose} type='button' className='text-sm  cursor-pointer rounded shadow px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100'>ยกเลิก</button>
-                                <button type='submit' className='text-sm  cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 '>ยืนยัน</button>
+                                <button
+                                    type='submit'
+                                    disabled={loading}
+                                    className='text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-x-2'
+                                >
+                                    {loading ? (
+                                        <>
+                                            <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                            <span>กำลังดำเนินการ</span>
+                                        </>
+                                    ) : (
+                                        <span>ยืนยัน</span>
+                                    )}
+                                </button>
                             </div>
                         </form>
                     </div>

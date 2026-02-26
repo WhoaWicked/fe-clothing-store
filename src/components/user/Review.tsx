@@ -77,9 +77,11 @@ export const ReviewList: FC = () => {
     const [sortMenu, setSortMenu] = useState<boolean>(false);
     const [sortType, setSortType] = useState<string>('');
     const [activeReviewMenu, setActiveReviewMenu] = useState<number | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            setLoading(true);
             const response = await axios.post('/api/user/review', {
                 productId,
                 rating: selectedRating,
@@ -94,6 +96,8 @@ export const ReviewList: FC = () => {
             if (axios.isAxiosError(error) && error.response) {
                 console.error("Error submitting review:", error.response.data.error.message || error.response);
             }
+        } finally {
+            setLoading(false);
         }
     }
     const handleDelete = async (reviewId: number) => {
@@ -213,8 +217,20 @@ export const ReviewList: FC = () => {
                                                     setComment('');
                                                     setSelectedRating(0);
                                                 }} className='font-light text-sm text-black px-4 py-2 rounded-full cursor-pointer transition-all duration-300 hover:bg-gray-200'>ยกเลิก</button>
-                                                <button disabled={!selectedRating || !comment} type='submit' className={`${selectedRating && comment ? 'bg-black cursor-pointer hover:opacity-75 text-white' : 'bg-gray-200 text-gray-500'} font-light text-sm  px-4 py-2 rounded-full transition-all duration-100 `}>ส่งความคิดเห็น</button>
-                                            </div>
+                                                <button
+                                                    disabled={!selectedRating || !comment || loading}
+                                                    type='submit'
+                                                    className={`${selectedRating && comment && !loading ? 'bg-black cursor-pointer hover:opacity-75 text-white' : 'bg-gray-200 text-gray-500 cursor-not-allowed'} font-light text-sm px-4 py-2 rounded-full transition-all duration-100 flex items-center gap-x-2`}
+                                                >
+                                                    {loading ? (
+                                                        <>
+                                                            <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                                            <span>กำลังส่ง</span>
+                                                        </>
+                                                    ) : (
+                                                        <span>ส่งความคิดเห็น</span>
+                                                    )}
+                                                </button>                                            </div>
                                         </form>
                                     </div>
                                 )}

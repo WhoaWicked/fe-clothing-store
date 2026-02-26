@@ -164,7 +164,7 @@ export function Checkout() {
                                 className=''>
                                 <button
                                     type='submit'
-                                    className={`${cartData?.items.length === 0 ? 'opacity-40 cursor-default' : 'hover:opacity-70'} bg-black w-full cursor-pointer  text-white font-light text-md py-2.5 transition-all duration-100 `}>สั่งซื้อสินค้า</button>
+                                    className={`${cartData?.items.length === 0 ? 'opacity-40 cursor-default' : 'hover:opacity-80 active:scale-85 duration-200'} bg-black w-full cursor-pointer  text-white font-light text-md py-2.5 transition-all `}>สั่งซื้อสินค้า</button>
                             </div>
                         </form>
                     </div>

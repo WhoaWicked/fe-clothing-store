@@ -16,6 +16,7 @@ import { SlArrowLeft, SlArrowRight } from "react-icons/sl";
 import Select from 'react-select';
 import ActiveSwitch from '../input/ActiveSwitch';
 import { PiImages } from "react-icons/pi";
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
@@ -303,7 +304,7 @@ const AddProductModal: FC<AddProductModalProps> = ({ onClose, mutate }) => {
             setPreviewUrl(URL.createObjectURL(e.target.files[0]));
         }
     };
-
+    const [loading, setLoading] = useState(false);
     const handleCreateProduct = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -330,6 +331,7 @@ const AddProductModal: FC<AddProductModalProps> = ({ onClose, mutate }) => {
             formData.append('best_seller', String(isBestSeller));
             formData.append('variants', JSON.stringify(variants));
             if (image) { formData.append('image', image); }
+            setLoading(true);
             const response = await axios.post('/api/staff/product', formData);
             Swal.fire({
                 icon: 'success',
@@ -350,6 +352,8 @@ const AddProductModal: FC<AddProductModalProps> = ({ onClose, mutate }) => {
                 return;
             }
             console.error('Error creating product:', error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -488,8 +492,20 @@ const AddProductModal: FC<AddProductModalProps> = ({ onClose, mutate }) => {
                                     </div>
                                     <div className='flex justify-end gap-x-4'>
                                         <button onClick={onClose} type='button' className='text-sm  cursor-pointer rounded shadow px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100'>ยกเลิก</button>
-                                        <button type='submit' className='text-sm  cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 '>เพิ่มสินค้า</button>
-                                    </div>
+                                        <button
+                                            type='submit'
+                                            disabled={loading}
+                                            className='text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-x-2'
+                                        >
+                                            {loading ? (
+                                                <>
+                                                    <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                                    <span>กำลังเพิ่มสินค้า</span>
+                                                </>
+                                            ) : (
+                                                <span>เพิ่มสินค้า</span>
+                                            )}
+                                        </button>                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -598,7 +614,7 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
             setPreviewUrl(URL.createObjectURL(e.target.files[0]));
         }
     };
-
+    const [loading, setLoading] = useState(false);
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -627,6 +643,7 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
             if (image) {
                 formData.append('image', image);
             }
+            setLoading(true);
             const response = await axios.put(`/api/staff/product/${product.product_id}`, formData);
             Swal.fire({
                 icon: 'success',
@@ -648,6 +665,8 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
                 return;
             }
             console.error('Update Product error:', error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -891,8 +910,20 @@ const ProductDetailModal: FC<ProductDetailModalProps> = ({ product, onClose, mut
                                 ) : (
                                     <div className='flex items-center gap-x-4'>
                                         <button onClick={() => setIsEditMode(false)} type='button' className='text-sm  cursor-pointer rounded shadow px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100'>ยกเลิก</button>
-                                        <button type='submit' className='text-sm  cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 '>บันทึก</button>
-                                    </div>
+                                        <button
+                                            type='submit'
+                                            disabled={loading}
+                                            className='text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-x-2'
+                                        >
+                                            {loading ? (
+                                                <>
+                                                    <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                                    <span>กำลังบันทึก</span>
+                                                </>
+                                            ) : (
+                                                <span>บันทึก</span>
+                                            )}
+                                        </button>                                    </div>
                                 )}
                             </div>
                         </form>

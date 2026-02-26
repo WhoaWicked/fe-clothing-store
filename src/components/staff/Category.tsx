@@ -14,6 +14,7 @@ import { CiEdit } from 'react-icons/ci';
 import { IoCheckmarkDoneOutline } from 'react-icons/io5';
 import { PiTrashLight } from 'react-icons/pi';
 import { FaLayerGroup } from 'react-icons/fa';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
@@ -88,6 +89,7 @@ export const CategoryList: FC = () => {
 
     const [selectIdCategory, setSelectIdCategory] = useState<any>(null);
     const [editCategoryName, setEditCategoryName] = useState('');
+    const [loading, setLoading] = useState(false);
     const handleUpdateCategory = async (category: any) => {
         try {
             const { category_id, is_active, category_name } = category;
@@ -104,6 +106,7 @@ export const CategoryList: FC = () => {
                 });
                 if (!confirmResult.isConfirmed) return;
             }
+            setLoading(true);
             const response = await axios.put(`/api/staff/category/${category_id}`,
                 {
                     category_name: editCategoryName,
@@ -125,6 +128,8 @@ export const CategoryList: FC = () => {
                 return;
             }
             console.error('Update Category error:', error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -284,19 +289,22 @@ export const CategoryList: FC = () => {
                                         </div>
                                     ) : (
                                         <div className='flex items-center justify-center gap-x-4'>
-                                            <button onClick={() => {
-                                                setSelectIdCategory(null)
-                                                setEditCategoryName('');
-                                            }}
+                                            <button
+                                                disabled={loading}
+                                                onClick={() => {
+                                                    setSelectIdCategory(null)
+                                                    setEditCategoryName('');
+                                                }}
                                                 className="cursor-pointer size-9 flex justify-center items-center rounded-full border border-gray-300 duration-200 hover:border-gray-500 hover:shadow-[0px_0px_10px_#00000014]"
                                             >
                                                 <RxCross2 className="text-gray-500" size={20} />
                                             </button>
                                             <button
+                                                disabled={loading}
                                                 onClick={() => handleUpdateCategory(category)}
                                                 className="cursor-pointer size-9 flex justify-center items-center rounded-full border border-gray-300 duration-200 hover:border-gray-500 hover:shadow-[0px_0px_10px_#00000014]"
                                             >
-                                                <IoCheckmarkDoneOutline className="text-gray-600" size={20} />
+                                                {loading ? <AiOutlineLoading3Quarters className='animate-spin size-4' /> : <IoCheckmarkDoneOutline className="text-gray-600" size={20} />}
                                             </button>
                                         </div>
                                     )}
@@ -346,6 +354,7 @@ export const AddCategoryModal: FC<AddCategorryModalProps> = ({ onClose, mutate }
     }, [])
 
     const [category_name, setCategoryName] = useState('');
+    const [loading, setLoading] = useState(false);
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -362,6 +371,7 @@ export const AddCategoryModal: FC<AddCategorryModalProps> = ({ onClose, mutate }
                 });
                 if (!confirmResult.isConfirmed) return;
             }
+            setLoading(true);
             const response = await axios.post('/api/staff/category', {
                 category_name
             });
@@ -384,6 +394,8 @@ export const AddCategoryModal: FC<AddCategorryModalProps> = ({ onClose, mutate }
                 return;
             }
             console.error('Add Category error:', error);
+        } finally {
+            setLoading(false);
         }
     }
     return (
@@ -406,7 +418,20 @@ export const AddCategoryModal: FC<AddCategorryModalProps> = ({ onClose, mutate }
                             </div>
                             <div className='flex justify-end gap-x-4'>
                                 <button onClick={onClose} type='button' className='text-sm  cursor-pointer rounded shadow px-5 py-2 bg-white text-gray-700 font-light border border-gray-300 duration-200 hover:bg-gray-100'>ยกเลิก</button>
-                                <button type='submit' className='text-sm  cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 '>เพิ่ม</button>
+                                <button
+                                    type='submit'
+                                    disabled={loading}
+                                    className='text-sm cursor-pointer rounded px-5 py-2 bg-black text-white font-light duration-200 hover:opacity-80 disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-x-2'
+                                >
+                                    {loading ? (
+                                        <>
+                                            <AiOutlineLoading3Quarters className='animate-spin size-4' />
+                                            <span>กำลังเพิ่ม</span>
+                                        </>
+                                    ) : (
+                                        <span>เพิ่ม</span>
+                                    )}
+                                </button>
                             </div>
                         </form>
                     </div>
